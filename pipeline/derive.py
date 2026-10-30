@@ -78,8 +78,10 @@ def load_definitions(repo: Path) -> dict[str, list[dict]]:
         if not base.exists():
             continue
         for folder in sorted(p for p in base.iterdir() if p.is_dir()):
-            swagger = folder / "apiDefinition.swagger.json"
-            if not swagger.exists():
+            # Some folders use different casing, which matters on case-sensitive file systems.
+            files = {f.name.lower(): f for f in folder.iterdir() if f.is_file()}
+            swagger = files.get("apidefinition.swagger.json")
+            if swagger is None:
                 continue
             try:
                 doc = json.loads(swagger.read_text("utf-8-sig"))
@@ -99,7 +101,7 @@ def load_definitions(repo: Path) -> dict[str, list[dict]]:
                 "host": doc.get("host") or "",
                 "basePath": doc.get("basePath") or "",
                 "operations": operations,
-                "scopes": _scopes(folder / "apiProperties.json"),
+                "scopes": _scopes(files.get("apiproperties.json")),
             }
             for key in {norm(folder.name), norm((doc.get("info") or {}).get("title", ""))}:
                 if key:
@@ -107,8 +109,8 @@ def load_definitions(repo: Path) -> dict[str, list[dict]]:
     return definitions
 
 
-def _scopes(path: Path) -> list[str]:
-    if not path.exists():
+def _scopes(path: Path | None) -> list[str]:
+    if path is None:
         return []
     try:
         text = path.read_text("utf-8-sig")

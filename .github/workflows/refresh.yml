@@ -66,7 +66,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if grep -qE "New: [1-9]|removed: [1-9]|changed: [1-9]|Checks that need attention|Source pages that changed" .cache/report.md; then
+          if grep -qE "New: [1-9]|; removed: [1-9]|; changed: [1-9]|Checks that need attention|Source pages that changed" .cache/report.md; then
             title="Connector review: $(date -u +%F)"
             gh issue create --title "$title" --body-file .cache/report.md
           fi

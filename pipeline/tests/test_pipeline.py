@@ -146,3 +146,22 @@ def test_definition_match_picks_the_best_candidate_and_needs_half_the_operations
     other = {"group": "certified-connectors", "folder": "m", "operations": {"X": {}}}
     assert match_definition(record, {"thing": [weak, strong]}) is strong
     assert match_definition(record, {"thing": [other]}) is None
+
+
+def test_definition_file_names_are_matched_whatever_their_case(tmp_path):
+    from pipeline.derive import load_definitions
+    folder = tmp_path / "certified-connectors" / "Example"
+    folder.mkdir(parents=True)
+    (folder / "apidefinition.swagger.json").write_text(
+        '{"info": {"title": "Example"}, "host": "api.example.com", "paths": {"/a": {"get": {"operationId": "GetA"}}}}', "utf-8")
+    assert load_definitions(tmp_path)["example"][0]["operations"]["GetA"]["method"] == "get"
+
+
+def test_review_issue_pattern_ignores_unchanged_pages():
+    import re
+    workflow = (Path(__file__).parents[2] / ".github" / "workflows" / "refresh.yml").read_text("utf-8")
+    pattern = re.search(r'grep -qE "([^"]+)"', workflow).group(1)
+    quiet = "- Pages downloaded: 0; unchanged: 1603\n- New: 0; removed: 0; changed: 0\n"
+    assert not re.search(pattern, quiet)
+    assert re.search(pattern, "- New: 0; removed: 0; changed: 2\n")
+    assert re.search(pattern, "- New: 3; removed: 0; changed: 0\n")
