@@ -34,7 +34,6 @@ export function renderHome(main) {
     <section class="hero-band on-dark">
       <div class="wrap-inner hero-grid">
         <div>
-          <p class="eyebrow">${productIcon("Power Platform")}For ${h(productName("Power Platform"))}</p>
           <h1>Decide what every connector <span class="gradient-text">may do in your organisation.</span></h1>
           <p class="lede">See what each connector can call and where it reaches. Set what you will accept. Get a strategy that uses only controls Microsoft documents, with their limits stated.</p>
           <div class="actions">

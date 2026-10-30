@@ -79,7 +79,9 @@ code, .mono { font-family: var(--mono); font-size: .86em; }
 .site-header { background: var(--header-glass); backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; }
 .header-inner { display: flex; align-items: center; gap: 1.2rem; min-height: 62px; flex-wrap: wrap; padding-block: 6px; }
 .brand { display: inline-flex; align-items: center; gap: .6rem; font: 650 1.03rem var(--font-display); color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
-.brand-mark { color: var(--accent); flex: none; }
+.brand-product { display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; font-size: .95rem; color: var(--ink-2); white-space: nowrap; }
+.brand-product img { width: 28px; height: 28px; flex: none; display: block; }
+.brand-name { padding-left: .75rem; border-left: 1px solid var(--line-strong); white-space: nowrap; }
 .nav-list { display: flex; flex-wrap: wrap; gap: .15rem; list-style: none; margin: 0; padding: 0; }
 .nav-list a { display: block; padding: .4rem .8rem; color: var(--ink-2); text-decoration: none; border-radius: 999px; font-size: .95rem; font-weight: 500; transition: background .15s, color .15s; }
 .nav-list a:hover { background: var(--surface-2); color: var(--ink); }
@@ -90,10 +92,13 @@ code, .mono { font-family: var(--mono); font-size: .86em; }
 @media (max-width: 720px) {
   .site-header { position: static; }
   .header-inner { gap: .3rem .6rem; }
+  .brand { flex-direction: column; align-items: flex-start; gap: .1rem; }
+  .brand-name { padding-left: 0; border-left: 0; }
   .site-header nav { order: 3; width: 100%; margin: 0; }
   .nav-list a { padding: .3rem .6rem; font-size: .9rem; }
   .theme-toggle { margin-left: auto; }
   .wrap { padding: 0 16px; }
+  .header-inner { padding-block: 10px; }
   html { scroll-padding-top: 16px; }
 }
 .site-footer { margin-top: 5rem; border-top: 1px solid var(--line); padding: 2rem 0 3rem; color: var(--ink-3); font-size: .86rem; }
