@@ -67,9 +67,12 @@ class Classifier:
         return "other", "no classifying word"
 
 
-def load_definitions(repo: Path) -> dict[str, dict]:
-    """Read published connector definitions, keyed by normalised title and folder."""
-    definitions: dict[str, dict] = {}
+def load_definitions(repo: Path) -> dict[str, list[dict]]:
+    """Read published connector definitions, keyed by normalised title and folder.
+
+    Several definitions can share a key, so each key holds every candidate.
+    """
+    definitions: dict[str, list[dict]] = {}
     for group in ("certified-connectors", "independent-publisher-connectors"):
         base = repo / group
         if not base.exists():
@@ -100,7 +103,7 @@ def load_definitions(repo: Path) -> dict[str, dict]:
             }
             for key in {norm(folder.name), norm((doc.get("info") or {}).get("title", ""))}:
                 if key:
-                    definitions.setdefault(key, definition)
+                    definitions.setdefault(key, []).append(definition)
     return definitions
 
 
@@ -134,16 +137,17 @@ def norm(text: str) -> str:
     return re.sub(r"[^a-z0-9]", "", text.lower())
 
 
-def match_definition(record: dict, definitions: dict[str, dict]) -> dict | None:
-    """Accept a definition only if at least half of the page's operation IDs appear in it."""
+def match_definition(record: dict, definitions: dict[str, list[dict]]) -> dict | None:
+    """Pick the candidate sharing the most operation IDs, if it has at least half of the page's."""
     op_ids = {o["opId"] for o in record["actions"] + record["triggers"]}
     if not op_ids:
         return None
-    for key in (norm(record["name"]), norm(record["slug"])):
-        candidate = definitions.get(key)
-        if candidate and len(op_ids & set(candidate["operations"])) / len(op_ids) >= 0.5:
-            return candidate
-    return None
+    candidates = definitions.get(norm(record["name"]), []) + definitions.get(norm(record["slug"]), [])
+    if not candidates:
+        return None
+    # The folder name breaks ties, so the result does not depend on the platform's sort order.
+    best = max(candidates, key=lambda c: (len(op_ids & set(c["operations"])), c["group"], c["folder"].lower()))
+    return best if len(op_ids & set(best["operations"])) / len(op_ids) >= 0.5 else None
 
 
 def _is_microsoft_domain(domain: str, curated: dict) -> bool:

@@ -136,3 +136,13 @@ def test_fail_safe_stops_when_too_many_pages_fail(tmp_path, monkeypatch):
     with pytest.raises(refresh.FailSafe):
         refresh.run(False, "2026-01-01")
     assert not (current / "index.json").exists()
+
+
+def test_definition_match_picks_the_best_candidate_and_needs_half_the_operations():
+    from pipeline.derive import match_definition
+    record = {"name": "Thing", "slug": "thing", "actions": [{"opId": "A"}, {"opId": "B"}], "triggers": []}
+    weak = {"group": "certified-connectors", "folder": "a", "operations": {"A": {}}}
+    strong = {"group": "certified-connectors", "folder": "z", "operations": {"A": {}, "B": {}}}
+    other = {"group": "certified-connectors", "folder": "m", "operations": {"X": {}}}
+    assert match_definition(record, {"thing": [weak, strong]}) is strong
+    assert match_definition(record, {"thing": [other]}) is None
