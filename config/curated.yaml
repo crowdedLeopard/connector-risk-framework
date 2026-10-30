@@ -1,0 +1,202 @@
+# Curated lists used when a trait cannot be derived from page data alone.
+# Every entry here is judgement or a name mapping, and the site labels it as such.
+# Slugs are checked against the live catalogue on every refresh; a slug that no longer
+# exists fails the checks rather than silently doing nothing.
+
+# Domains treated as Microsoft's own services when they appear as a connector's Website.
+# A subdomain of any entry also matches.
+microsoft_domains:
+  - microsoft.com
+  - office.com
+  - azure.com
+  - powerautomate.com
+  - powerapps.com
+  - powerbi.com
+  - dynamics.com
+  - sharepoint.com
+  - aka.ms
+  - bing.com
+  - msn.com
+  - live.com
+  - outlook.com
+  - onedrive.com
+  - skype.com
+  - yammer.com
+  - qnamaker.ai
+  - windows.net
+  - visualstudio.com
+  - cloud.microsoft
+  - powerplatform.com
+  - book.ms
+
+# Microsoft services whose Website on Learn points somewhere that would mislead the domain check.
+origin_override: [microsoftlearndocsmcpserver]
+
+# Microsoft-published connectors with no Website on Learn, sorted by what the connector name shows.
+origin_when_no_website:
+  microsoft: [azureagentservice, azureaifoundryinference, azureaisearch, azureaisearchfoundryiq, azurespeechpronuncia, azuretexttospeech, biztalk, cognitiveservicesspe, contosohub, conversionservice, dataactivatorpreview, documentdb, dynamicsfraudprotect, dynamicssmbsaas, excelonline, kusto, m365updatesapp, microsoftpartnercent, office365groupsmail, officeaiagent, outlooktasks, processmining, securitycopilot, sendmail, sentinelmcp, sharepointembedded, shifts, uiflow, visualstudioteamservices, workiqmcp]
+  third-party: [cgtrader, flic, googletasks, nexmo, salesforce, shop]
+
+# Connectors where the maker supplies any server or URL, so the destination is not fixed by the connector.
+any_endpoint:
+  smtp: "Sends mail through whichever server the connection names."
+  ftp: "Connects to whichever FTP server the connection names."
+  sftp: "Connects to whichever SFTP server the connection names."
+  sftpwithssh: "Connects to whichever SFTP server the connection names."
+  webcontents: "Calls resources that the maker specifies."
+  webcontentsv2: "Calls resources that the maker specifies."
+  rss: "Reads whichever feed URL the maker specifies."
+
+# Services whose common use is a personal account. A business plan may exist, so treat as a starting
+# judgement and approve the connector in the tool if the organisation contracts the service.
+consumer:
+  gmail: "Personal or Google Workspace mail. Microsoft uses Gmail as its example of a Non-Business connector."
+  googlecalendar: "Google account calendar."
+  googlecontacts: "Google account contacts."
+  googledrive: "Google account storage."
+  googlesheet: "Google account spreadsheets."
+  googletasks: "Google account tasks."
+  googlephotosip: "Google account photos."
+  dropbox: "Personal or business file storage."
+  outlook: "Outlook.com personal mail."
+  onedrive: "OneDrive personal storage."
+  todoconsumer: "Named Consumer on Microsoft Learn."
+  excelonline: "Excel files in personal OneDrive."
+  outlooktasks: "Outlook.com tasks."
+  onenotepersonalip: "Named Consumer on Microsoft Learn."
+
+# Added to whatever Learn places in the Social Media category.
+public_publishing:
+  blogger: "Publishes to public blogs."
+  medium: "Publishes to a public site."
+  wordpress: "Publishes to websites."
+  youtube: "Publishes or manages public video."
+  twitter: "Publishes public posts."
+  linkedin: "Publishes to a professional network."
+  linkedinv2: "Publishes to a professional network."
+
+# Names on the Connector classification page, mapped to the slug in the Learn catalogue.
+# The catalogue often shows a different display name. Any name on the page without a mapping fails the checks.
+nonblockable:
+  Defender for Cloud Apps: cloudappsecurity
+  Dynamics 365 Customer Voice: microsoftformspro
+  Excel Online (Business): excelonlinebusiness
+  Kaizala: kaizala
+  Microsoft 365 Groups: office365groups
+  Microsoft 365 Groups Mail (Preview): office365groupsmail
+  Microsoft 365 Outlook: office365
+  Microsoft 365 Users: office365users
+  Microsoft Teams: teams
+  Microsoft To-Do (Business): todo
+  OneDrive for Business: onedriveforbusiness
+  OneNote (Business): onenote
+  Planner: planner
+  Power BI: powerbi
+  SharePoint: sharepointonline
+  Shifts: shifts
+  Skype for Business Online: skypeforbiz
+  Yammer: yammer
+  Approvals: approvals
+  Notifications: flowpush
+  Dataverse (legacy): commondataservice
+  Dataverse: commondataserviceforapps
+  Power Apps Notifications: [powerappsnotification, powerappsnotificationv2]
+  Microsoft Copilot Studio: powervirtualagents
+
+# Names in the endpoint filtering list, mapped to catalogue slugs. HTTP, HTTP Webhook, Browser Automation
+# and UI Automation are not in the catalogue and appear as built-in entries instead.
+endpoint_filtering: [webcontents, webcontentsv2, sql, azureblob, smtp]
+
+# Learn lists one of these under HTTP connectors for ACP purposes, and the page does not say which.
+acp_unconfirmed: [webcontents, webcontentsv2]
+
+# Not available for classification in data policies.
+not_classifiable: [conversionservice]
+
+# Tenant isolation known issue.
+tenant_isolation_gap: [visualstudioteamservices]
+
+# Named on the tenant isolation page as examples of connectors that use Microsoft Entra ID.
+tenant_isolation_examples: [office365, sharepointonline]
+
+# Connection parameter names that mean the maker chooses the target system.
+target_parameter_pattern: '(?i)\b(server|host|hostname|url|uri|endpoint|instance|subdomain|domain|site|address|namespace|tenant url|base url|account name)\b'
+
+# Governance items that appear in data policies but have no catalogue page.
+builtin:
+  - slug: builtin-http
+    name: HTTP
+    kind: Built-in connector
+    summary: Calls any HTTP endpoint that the maker specifies.
+    exposures: [any-endpoint, raw, stored-secret]
+    endpointFiltering: true
+    acp: unsupported
+    facts: [http-child, endpoint-filtering, endpoint-static, acp-unsupported]
+  - slug: builtin-http-webhook
+    name: HTTP Webhook
+    kind: Built-in connector
+    summary: Subscribes a flow to webhooks at any endpoint that the maker specifies.
+    exposures: [any-endpoint, raw]
+    endpointFiltering: true
+    acp: unsupported
+    facts: [endpoint-filtering, endpoint-static, acp-unsupported]
+  - slug: builtin-http-request
+    name: When an HTTP request is received
+    kind: Built-in trigger
+    summary: Starts a flow from an inbound HTTP call.
+    exposures: [any-endpoint, raw]
+    endpointFiltering: false
+    acp: unsupported
+    facts: [http-child, acp-unsupported]
+  - slug: builtin-custom-connectors
+    name: Custom connectors (all)
+    kind: Connector class
+    summary: Tenant-built connectors. They are specific to each organisation, so this tool cannot list them.
+    exposures: [any-endpoint, undocumented]
+    endpointFiltering: false
+    acp: unsupported
+    actionControl: false
+    facts: [custom-connectors, action-control, acp-unsupported]
+  - slug: builtin-browser-automation
+    name: Browser Automation
+    kind: Desktop flow module
+    summary: Automates web browsers from desktop flows.
+    exposures: [any-endpoint, raw]
+    endpointFiltering: true
+    acp: unsupported
+    facts: [endpoint-filtering, desktop-suspended, acp-unsupported]
+  - slug: builtin-ui-automation
+    name: UI Automation
+    kind: Desktop flow module
+    summary: Automates desktop applications from desktop flows.
+    exposures: [any-endpoint, raw]
+    endpointFiltering: true
+    acp: unsupported
+    facts: [endpoint-filtering, desktop-suspended, acp-unsupported]
+  - slug: builtin-copilot-unauthenticated
+    name: Chat without Microsoft Entra ID authentication in Copilot Studio
+    kind: Copilot Studio virtual connector
+    summary: Blocking this stops makers publishing agents that are not configured for authentication.
+    exposures: [public-publishing]
+    endpointFiltering: false
+    acp: unsupported
+    actionControl: false
+    facts: [copilot-scope, acp-unsupported]
+  - slug: builtin-copilot-directline
+    name: Direct Line channels in Copilot Studio
+    kind: Copilot Studio virtual connector
+    summary: Blocking this stops makers publishing agents to Direct Line channels.
+    exposures: [public-publishing]
+    endpointFiltering: false
+    acp: unsupported
+    actionControl: false
+    facts: [copilot-scope, acp-unsupported]
+  - slug: builtin-copilot-skills
+    name: Skills with Copilot Studio
+    kind: Copilot Studio virtual connector
+    summary: Blocking this stops makers using Azure Bot Service skills in agents.
+    exposures: [raw]
+    endpointFiltering: false
+    acp: unsupported
+    actionControl: false
+    facts: [copilot-scope, acp-unsupported]

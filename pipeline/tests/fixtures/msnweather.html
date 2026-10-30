@@ -1,0 +1,1806 @@
+<main
+					id="main"
+					role="main"
+					class="layout-body-main "
+					data-bi-name="content"
+					lang="en-us"
+					dir="ltr"
+				>
+					
+			<div
+		id="ms--content-header"
+		class="content-header default-focus border-bottom-none"
+		data-bi-name="content-header"
+	>
+		<div class="content-header-controls margin-xxs margin-inline-sm-tablet">
+			<button
+				type="button"
+				class="contents-button button button-sm margin-right-xxs"
+				data-bi-name="contents-expand"
+				aria-haspopup="true"
+				data-contents-button
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-menu"></span></span>
+				<span class="contents-expand-title"> Table of contents </span>
+			</button>
+			<button
+				type="button"
+				class="ap-collapse-behavior ap-expanded button button-sm"
+				data-bi-name="ap-collapse"
+				aria-controls="action-panel"
+			>
+				<span class="icon" aria-hidden="true"><span class="docon docon-exit-mode"></span></span>
+				<span>Exit editor mode</span>
+			</button>
+		</div>
+	</div> 
+		<div
+			id="action-panel"
+			role="region"
+			aria-label="Action Panel"
+			class="action-panel"
+			tabindex="-1"
+		></div>
+	
+			<div
+				data-main-column
+				class="reading-width margin-inline-auto layout-padding padding-top-none padding-top-sm-tablet padding-bottom-sm"
+			>
+				<div>
+					
+		<div id="article-header" class="background-color-body margin-bottom-xs display-none-print">
+			<div class="display-flex align-items-center justify-content-space-between">
+				
+		<details
+			id="article-header-breadcrumbs-overflow-popover"
+			class="popover popover-left"
+			data-for="article-header-breadcrumbs"
+		>
+			<summary
+				class="button button-clear button-primary button-sm inner-focus"
+				aria-label="All breadcrumbs"
+			>
+				<span class="icon" aria-hidden="true">
+					<span class="docon docon-more"></span>
+				</span>
+			</summary>
+			<div id="article-header-breadcrumbs-overflow" class="popover-content"></div>
+		</details>
+
+		<bread-crumbs
+			id="article-header-breadcrumbs"
+			role="group"
+			aria-label="Breadcrumbs"
+			data-test-id="article-header-breadcrumbs"
+			class="overflow-hidden flex-grow-1 margin-right-sm margin-right-md-tablet margin-right-lg-desktop margin-left-negative-xxs padding-left-xxs"
+		></bread-crumbs>
+	 
+		<div
+			id="article-header-page-actions"
+			class="opacity-none margin-left-auto display-flex flex-wrap-no-wrap align-items-stretch"
+		>
+			
+		<button
+			class="button button-sm border-none inner-focus display-none-tablet flex-shrink-0 "
+			data-bi-name="ask-learn-assistant-entry"
+			data-test-id="ask-learn-assistant-modal-entry-mobile"
+			data-ask-learn-modal-entry
+			
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-label="Ask Learn"
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+		</button>
+		<button
+			class="button button-sm display-none display-inline-flex-tablet display-none-desktop flex-shrink-0 margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-modal-entry-tablet"
+			data-ask-learn-modal-entry
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+		<button
+			class="button button-sm display-none flex-shrink-0 display-inline-flex-desktop margin-right-xxs border-color-ask-learn "
+			data-bi-name="ask-learn-assistant-entry"
+			
+			data-test-id="ask-learn-assistant-flyout-entry"
+			data-ask-learn-flyout-entry
+			data-flyout-button="toggle"
+			type="button"
+			style="min-width: max-content;"
+			aria-expanded="false"
+			aria-controls="ask-learn-flyout"
+			hidden
+		>
+			<span class="icon font-size-lg" aria-hidden="true">
+				<span class="docon docon-chat-sparkle-fill gradient-ask-learn-logo"></span>
+			</span>
+			<span>Ask Learn</span>
+		</button>
+	 
+
+			<details class="popover popover-right" id="article-header-page-actions-overflow">
+				<summary
+					class="justify-content-flex-start button button-clear button-sm button-primary inner-focus"
+					aria-label="More actions"
+					aria-expanded="false"
+					title="More actions"
+				>
+					<span class="icon" aria-hidden="true">
+						<span class="docon docon-more-vertical"></span>
+					</span>
+				</summary>
+				<div class="popover-content">
+					
+		<button
+			type="button"
+			id="ms--focus-mode-button"
+			data-focus-mode
+			data-bi-name="focus-mode-entry"
+			data-page-action-item="overflow-all"
+			data-popover-close
+			class="button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus display-none display-inline-flex-tablet"
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-glasses"></span>
+			</span>
+			<span>Reading mode</span>
+		</button>
+	 
+		<button
+			data-page-action-item="overflow-mobile"
+			type="button"
+			class="display-block-layout-menu-collapsed button-block button-sm inner-focus button button-clear display-none-tablet justify-content-flex-start text-align-left"
+			data-bi-name="contents-expand"
+			data-contents-button
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true"
+				><span class="docon docon-editor-list-bullet"></span
+			></span>
+			<span class="contents-expand-title">Table of contents</span>
+		</button>
+	 
+		<a
+			id="lang-link-overflow"
+			class="button-sm inner-focus button button-clear button-block justify-content-flex-start text-align-left"
+			data-bi-name="language-toggle"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-read-in-link
+			href="#"
+			hidden
+		>
+			<span class="icon" aria-hidden="true" data-read-in-link-icon>
+				<span class="docon docon-locale-globe"></span>
+			</span>
+			<span data-read-in-link-text>Read in English</span>
+		</a>
+	
+					
+		<button
+			type="button"
+			class="collection button button-clear button-sm button-block justify-content-flex-start text-align-left inner-focus"
+			data-list-type="collection"
+			data-bi-name="collection"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="collection-status">Add</span>
+		</button>
+	 
+		<button
+			type="button"
+			class="collection button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+			data-list-type="plan"
+			data-bi-name="plan"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			data-popover-close
+			hidden
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-circle-addition"></span>
+			</span>
+			<span class="plan-status">Add to Plans</span>
+		</button>
+	 
+					
+		<a
+			data-contenteditbtn
+			class="button button-clear button-block button-sm inner-focus justify-content-flex-start text-align-left text-decoration-none"
+			data-bi-name="edit"
+			data-page-action-item="overflow-all"
+			data-check-hidden="true"
+			hidden
+			href=""
+			data-original_content_git_url="https://github.com/MicrosoftDocs/BusinessApplicationPlatform-Connectors/blob/live/docs/MsnWeather/index.yml"
+			data-original_content_git_url_template="{repo}/blob/{branch}/docs/MsnWeather/index.yml"
+			data-pr_repo=""
+			data-pr_branch=""
+		>
+			<span class="icon" aria-hidden="true">
+				<span class="docon docon-edit-outline"></span>
+			</span>
+			<span>Edit</span>
+		</a>
+	  
+		<hr class="margin-block-xxs" />
+		
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="copy-markdown"
+					data-page-action-item="overflow-all"
+					data-copy-markdown
+					data-copy-state="idle"
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span data-show-when="idle" class="docon docon-code-lang"></span>
+						<span data-show-when="loading" class="loader" hidden></span>
+						<span data-show-when="success" class="docon docon-check-mark" hidden></span>
+					</span>
+					<span>Copy Markdown</span>
+				</button>
+		   
+				<button
+					class="button button-block button-clear button-sm justify-content-flex-start text-align-left inner-focus"
+					type="button"
+					data-bi-name="print"
+					data-page-action-item="overflow-all"
+					data-popover-close
+					data-print-page
+					data-check-hidden="true"
+				>
+					<span class="icon color-primary" aria-hidden="true">
+						<span class="docon docon-print"></span>
+					</span>
+					<span>Print</span>
+				</button>
+		  
+	
+				</div>
+			</details>
+		</div>
+	
+			</div>
+		</div>
+	  
+		<!-- privateUnauthorizedTemplate is hidden by default -->
+		<div unauthorized-private-section data-bi-name="permission-content-unauthorized-private" hidden>
+			<hr class="hr margin-top-xs margin-bottom-sm" />
+			<div class="notification notification-info">
+				<div class="notification-content">
+					<p class="margin-top-none notification-title">
+						<span class="icon" aria-hidden="true"
+							><span class="docon docon-exclamation-circle-solid"></span
+						></span>
+						<span>Note</span>
+					</p>
+					<p class="margin-top-none authentication-determined not-authenticated">
+						Access to this page requires authorization. You can try <a class="docs-sign-in" href="#" data-bi-name="permission-content-sign-in">signing in</a> or <a  class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+					<p class="margin-top-none authentication-determined authenticated">
+						Access to this page requires authorization. You can try <a class="docs-change-directory" data-bi-name="permisson-content-change-directory">changing directories</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	
+					<div class="content"></div>
+					   <div class="content"><h1>MSN Weather</h1>
+
+<nav id="center-doc-outline" class="doc-outline display-none-desktop display-none-print margin-bottom-sm" data-bi-name="intopic toc" aria-label="">
+  <h2 class="title is-6 margin-block-xs"></h2>
+</nav>
+
+<div class="margin-block-sm display-flex align-items-center justify-content-flex-start flex-wrap-nowrap">
+		<img src="https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1802/1.0.1802.4640/msnweather/icon.png" role="presentation" class="image is-64x64 margin-inline-xxs" data-linktype="external">
+	<div class="summary">
+		<p>MSN Weather gets you the very latest weather forecast, including temperature, humidity, precipitation for your location.</p>
+
+	</div>
+</div>
+
+<p>This connector is available in the following products and regions:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Class</th>
+<th>Regions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Copilot Studio</strong></td>
+<td>Standard</td>
+<td>All <a href="/en-us/flow/regions-overview" data-linktype="absolute-path">Power Automate regions</a> except the following: <br> &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp; China Cloud operated by 21Vianet</td>
+</tr>
+<tr>
+<td><strong>Logic Apps</strong></td>
+<td>Standard</td>
+<td>All <a href="https://azure.microsoft.com/global-infrastructure/services/?products=logic-apps&amp;regions=all" data-linktype="external">Logic Apps regions</a> except the following: <br> &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp; Azure China regions <br> &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp; US Department of Defense (DoD)</td>
+</tr>
+<tr>
+<td><strong>Power Apps</strong></td>
+<td>Standard</td>
+<td>All <a href="/en-us/powerapps/administrator/regions-overview#what-regions-are-available" data-linktype="absolute-path">Power Apps regions</a> except the following: <br> &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp; China Cloud operated by 21Vianet</td>
+</tr>
+<tr>
+<td><strong>Power Automate</strong></td>
+<td>Standard</td>
+<td>All <a href="/en-us/flow/regions-overview" data-linktype="absolute-path">Power Automate regions</a> except the following: <br> &nbsp;&nbsp;&nbsp;&nbsp; - &nbsp; China Cloud operated by 21Vianet</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Contact</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>Microsoft</td>
+</tr>
+<tr>
+<td>URL</td>
+<td><a href="https://support.microsoft.com" data-linktype="external">https://support.microsoft.com</a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Connector Metadata</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Publisher</td>
+<td>Microsoft</td>
+</tr>
+<tr>
+<td>Website</td>
+<td><a href="https://www.msn.com/weather" data-linktype="external">https://www.msn.com/weather</a></td>
+</tr>
+<tr>
+<td>Privacy policy</td>
+<td><a href="https://go.microsoft.com/fwlink/?LinkId=521839" data-linktype="external">https://go.microsoft.com/fwlink/?LinkId=521839</a></td>
+</tr>
+<tr>
+<td>Categories</td>
+<td>Data</td>
+</tr>
+</tbody>
+</table>
+
+
+
+	<h2 id="limits">Throttling Limits</h2>
+	<table class="table">
+		<tbody><tr>
+			<th>Name</th>
+			<th>Calls</th>
+			<th>Renewal Period</th>
+		</tr>
+			<tr>
+				<td>API calls per connection</td>
+				<td>8</td>
+				<td>60 seconds</td>
+			</tr>
+			<tr>
+				<td>Frequency of trigger polls</td>
+				<td>1</td>
+				<td>60 seconds</td>
+			</tr>
+	</tbody></table>
+
+	<h2 id="actions">Actions</h2>
+		<table class="table">
+				<tbody><tr>
+					<td>
+						<a href="#get-current-weather" data-linktype="self-bookmark">Get current weather</a>
+					</td>
+					<td>
+						<p>Get the current weather for a location.</p>
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="#get-forecast-for-today" data-linktype="self-bookmark">Get forecast for today</a>
+					</td>
+					<td>
+						<p>Get the forecast for the current day in the specified location.</p>
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="#get-the-forecast-for-tomorrow" data-linktype="self-bookmark">Get the forecast for tomorrow</a>
+					</td>
+					<td>
+						<p>Get the forecast for tomorrow in the specified location.</p>
+
+					</td>
+				</tr>
+		</tbody></table>
+<h3 id="get-current-weather">Get current weather</h3>
+	<div class="metadata operation-id">
+		<dl class="attributeList">
+			<dt>Operation ID:</dt><dd>
+				CurrentWeather
+			</dd>
+		</dl>
+	</div>
+
+<div>
+	<p>Get the current weather for a location.</p>
+
+		<h4 id="required-parameters">Parameters</h4>
+<table>
+	<tbody><tr>
+		<th>Name</th>
+		<th>Key</th>
+		<th>Required</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>Location</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location search query. Valid inputs are City, Region, State, Country, Landmark, Postal Code, latitude and longitude</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Units</div>
+			</td>
+			<td>units</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The measurement system used for all the measure values in the request and response. Valid options are 'Imperial' and 'Metric'.</p>
+
+			</td>
+		</tr>
+</tbody></table>		<h4 id="returns">Returns</h4>
+			
+			<div class="propertyInfo stack">
+				<dl class="parameterList">
+					<dt>Body</dt>
+					<dd class="subtle">
+						<a href="#currentweather" data-linktype="self-bookmark">CurrentWeather</a>
+					</dd>
+				</dl>				
+			</div>
+</div><h3 id="get-forecast-for-today">Get forecast for today</h3>
+	<div class="metadata operation-id">
+		<dl class="attributeList">
+			<dt>Operation ID:</dt><dd>
+				TodaysForecast
+			</dd>
+		</dl>
+	</div>
+
+<div>
+	<p>Get the forecast for the current day in the specified location.</p>
+
+		<h4 id="required-parameters">Parameters</h4>
+<table>
+	<tbody><tr>
+		<th>Name</th>
+		<th>Key</th>
+		<th>Required</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>Location</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location search query. Valid inputs are City, Region, State, Country, Landmark, Postal Code, latitude and longitude</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Units</div>
+			</td>
+			<td>units</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The measurement system used for all the measure values in the request and response. Valid options are 'Imperial' and 'Metric'.</p>
+
+			</td>
+		</tr>
+</tbody></table>		<h4 id="returns">Returns</h4>
+			
+			<div class="propertyInfo stack">
+				<dl class="parameterList">
+					<dt>Body</dt>
+					<dd class="subtle">
+						<a href="#weatherforecast" data-linktype="self-bookmark">WeatherForecast</a>
+					</dd>
+				</dl>				
+			</div>
+</div><h3 id="get-the-forecast-for-tomorrow">Get the forecast for tomorrow</h3>
+	<div class="metadata operation-id">
+		<dl class="attributeList">
+			<dt>Operation ID:</dt><dd>
+				TomorrowsForecast
+			</dd>
+		</dl>
+	</div>
+
+<div>
+	<p>Get the forecast for tomorrow in the specified location.</p>
+
+		<h4 id="required-parameters">Parameters</h4>
+<table>
+	<tbody><tr>
+		<th>Name</th>
+		<th>Key</th>
+		<th>Required</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>Location</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location search query. Valid inputs are City, Region, State, Country, Landmark, Postal Code, latitude and longitude</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Units</div>
+			</td>
+			<td>units</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The measurement system used for all the measure values in the request and response. Valid options are 'Imperial' and 'Metric'.</p>
+
+			</td>
+		</tr>
+</tbody></table>		<h4 id="returns">Returns</h4>
+			
+			<div class="propertyInfo stack">
+				<dl class="parameterList">
+					<dt>Body</dt>
+					<dd class="subtle">
+						<a href="#weatherforecast" data-linktype="self-bookmark">WeatherForecast</a>
+					</dd>
+				</dl>				
+			</div>
+</div>
+	<h2 id="triggers">Triggers</h2>
+		<table class="table">
+				<tbody><tr>
+					<td>
+						<a href="#when-the-current-conditions-change" data-linktype="self-bookmark">When the current conditions change</a>
+					</td>
+					<td>
+						<p>Triggers a new flow when the conditions change for a location.</p>
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="#when-the-current-weather-changes" data-linktype="self-bookmark">When the current weather changes</a>
+					</td>
+					<td>
+						<p>Triggers a new flow when the specified weather measure changes for a location.</p>
+
+					</td>
+				</tr>
+		</tbody></table>
+<h3 id="when-the-current-conditions-change">When the current conditions change</h3>
+	<div class="metadata operation-id">
+		<dl class="attributeList">
+			<dt>Operation ID:</dt><dd>
+				OnCurrentConditionsChange
+			</dd>
+		</dl>
+	</div>
+
+<div>
+	<p>Triggers a new flow when the conditions change for a location.</p>
+
+		<h4 id="required-parameters">Parameters</h4>
+<table>
+	<tbody><tr>
+		<th>Name</th>
+		<th>Key</th>
+		<th>Required</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>Location</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location search query. Valid inputs are City, Region, State, Country, Landmark, Postal Code, latitude and longitude</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Units</div>
+			</td>
+			<td>units</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The measurement system used for all the measure values in the request and response. Valid options are 'Imperial' and 'Metric'.</p>
+
+			</td>
+		</tr>
+</tbody></table>		<h4 id="returns">Returns</h4>
+			
+			<div class="propertyInfo stack">
+				<dl class="parameterList">
+					<dt>Body</dt>
+					<dd class="subtle">
+						<a href="#currentweather" data-linktype="self-bookmark">CurrentWeather</a>
+					</dd>
+				</dl>				
+			</div>
+</div><h3 id="when-the-current-weather-changes">When the current weather changes</h3>
+	<div class="metadata operation-id">
+		<dl class="attributeList">
+			<dt>Operation ID:</dt><dd>
+				OnCurrentWeatherChange
+			</dd>
+		</dl>
+	</div>
+
+<div>
+	<p>Triggers a new flow when the specified weather measure changes for a location.</p>
+
+		<h4 id="required-parameters">Parameters</h4>
+<table>
+	<tbody><tr>
+		<th>Name</th>
+		<th>Key</th>
+		<th>Required</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>Location</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location search query. Valid inputs are City, Region, State, Country, Landmark, Postal Code, latitude and longitude</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Measure</div>
+			</td>
+			<td>Measure</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The weather measure used for this operation. Valid options are 'Temperature', 'UV Index', 'Humidity' or 'Wind Speed'.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">When the measure...</div>
+			</td>
+			<td>When</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The condition the trigger will be checking. Valid options are 'Is equal to', 'Goes over', or 'Goes below'. For example, if the measure is 'temperature' and this parameter is set to 'Goes below' then the trigger will fire when the temperature goes below the target value.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Target</div>
+			</td>
+			<td>Target</td>
+			<td>
+					True
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The target value for the specified measure.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Units</div>
+			</td>
+			<td>units</td>
+			<td>
+					True
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The units for the measure value and the target value.</p>
+
+			</td>
+		</tr>
+</tbody></table>		<h4 id="returns">Returns</h4>
+			
+			<div class="propertyInfo stack">
+				<dl class="parameterList">
+					<dt>Body</dt>
+					<dd class="subtle">
+						<a href="#currentweather" data-linktype="self-bookmark">CurrentWeather</a>
+					</dd>
+				</dl>				
+			</div>
+</div>
+	<h2 id="definitions">Definitions</h2>
+<h3 id="currentweather">CurrentWeather</h3>
+<div>
+	
+<table class="table">
+	<tbody><tr>
+		<th>Name</th>
+		<th>Path</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Pressure</div>
+			</td>
+			<td>
+				responses.weather.current.baro
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The atmospheric pressure.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Conditions</div>
+			</td>
+			<td>
+				responses.weather.current.cap
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>A caption of weather conditions such as rainy, sunny, etc.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Dewpoint</div>
+			</td>
+			<td>
+				responses.weather.current.dewPt
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The temperature at which dew forms.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Apparent Temperature</div>
+			</td>
+			<td>
+				responses.weather.current.feels
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The apparent temperature, or feels-like temperature.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Humidity</div>
+			</td>
+			<td>
+				responses.weather.current.rh
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The relative humidity percentage.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">METAR weather conditions</div>
+			</td>
+			<td>
+				responses.weather.current.wx
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The METAR code of weather conditions.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">METAR Sky Conditions</div>
+			</td>
+			<td>
+				responses.weather.current.sky
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The METAR code of sky conditions.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Temperature</div>
+			</td>
+			<td>
+				responses.weather.current.temp
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The current temperature.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">UV Index</div>
+			</td>
+			<td>
+				responses.weather.current.uv
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The numerical UV index.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">UV Index Description</div>
+			</td>
+			<td>
+				responses.weather.current.uvDesc
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>A description of the meaning of the UV index.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Visibility Distance</div>
+			</td>
+			<td>
+				responses.weather.current.vis
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The visibility distance.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Direction</div>
+			</td>
+			<td>
+				responses.weather.current.windDir
+			</td>
+			<td>
+				integer
+			</td>
+			<td>
+				<p>The wind direction in degrees clockwise from north.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Speed</div>
+			</td>
+			<td>
+				responses.weather.current.windSpd
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The wind speed.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Gust Speed</div>
+			</td>
+			<td>
+				responses.weather.current.windGust
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The wind gust speed.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Last Updated</div>
+			</td>
+			<td>
+				responses.weather.current.created
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>The datetime at which provider created the current condition.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Latitude</div>
+			</td>
+			<td>
+				responses.source.coordinates.lat
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The latitude of the location.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Longitude</div>
+			</td>
+			<td>
+				responses.source.coordinates.lon
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The longitude of the location.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>
+				responses.source.location
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location for which provider created the current condition.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Pressure Units</div>
+			</td>
+			<td>
+				units.pressure
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for pressure measurements.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Temperature Units</div>
+			</td>
+			<td>
+				units.temperature
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for temperature measurements.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Speed Units</div>
+			</td>
+			<td>
+				units.speed
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for speed measurements.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Distance Units</div>
+			</td>
+			<td>
+				units.distance
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for distance measurements.</p>
+
+			</td>
+		</tr>
+</tbody></table>
+</div><h3 id="weatherforecast">WeatherForecast</h3>
+<div>
+	
+<table class="table">
+	<tbody><tr>
+		<th>Name</th>
+		<th>Path</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Conditions</div>
+			</td>
+			<td>
+				responses.daily.day.cap
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The caption of weather conditions such as rainy, sunny, etc.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Rain Chance</div>
+			</td>
+			<td>
+				responses.daily.day.precip
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The chance of precipitation (%).</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">METAR Weather Conditions</div>
+			</td>
+			<td>
+				responses.daily.day.wx
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The METAR code of weather conditions.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">METAR Sky Conditions</div>
+			</td>
+			<td>
+				responses.daily.day.sky
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The METAR code of sky conditions.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Direction</div>
+			</td>
+			<td>
+				responses.daily.day.windDir
+			</td>
+			<td>
+				integer
+			</td>
+			<td>
+				<p>The wind direction in degrees clockwise from north.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Speed</div>
+			</td>
+			<td>
+				responses.daily.day.windSpd
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The wind speed.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Summary</div>
+			</td>
+			<td>
+				responses.daily.day.summary
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>A text summary of the forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Conditions</div>
+			</td>
+			<td>
+				responses.daily.night.cap
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The caption of weather conditions such as rainy, sunny, etc.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Rain Chance</div>
+			</td>
+			<td>
+				responses.daily.night.precip
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The chance of precipitation (%).</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">METAR Weather Conditions</div>
+			</td>
+			<td>
+				responses.daily.night.wx
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The METAR code of weather conditions.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">METAR Sky Conditions</div>
+			</td>
+			<td>
+				responses.daily.night.sky
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The METAR code of sky conditions.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Direction</div>
+			</td>
+			<td>
+				responses.daily.night.windDir
+			</td>
+			<td>
+				integer
+			</td>
+			<td>
+				<p>The wind direction in degrees clockwise from north.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Wind Speed</div>
+			</td>
+			<td>
+				responses.daily.night.windSpd
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The wind speed.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Summary</div>
+			</td>
+			<td>
+				responses.daily.night.summary
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>A text summary of the forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Conditions</div>
+			</td>
+			<td>
+				responses.daily.pvdrCap
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The caption of weather conditions such as rainy, sunny, etc.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Date</div>
+			</td>
+			<td>
+				responses.daily.valid
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>The datetime at which the forecast is valid.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Rain Chance</div>
+			</td>
+			<td>
+				responses.daily.precip
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The chance of precipitation (%).</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Max Wind Speed</div>
+			</td>
+			<td>
+				responses.daily.windMax
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The peak wind speed for the day.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Max Wind Direction</div>
+			</td>
+			<td>
+				responses.daily.windMaxDir
+			</td>
+			<td>
+				integer
+			</td>
+			<td>
+				<p>The direction of the peak wind for the day.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Humidity High</div>
+			</td>
+			<td>
+				responses.daily.rhHi
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The high relative humidity point for the day.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Humidity Low</div>
+			</td>
+			<td>
+				responses.daily.rhLo
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The low relative humidity point for the day.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Temperature High</div>
+			</td>
+			<td>
+				responses.daily.tempHi
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The high temperature.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Temperature Low</div>
+			</td>
+			<td>
+				responses.daily.tempLo
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The low temperature.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">UV Index</div>
+			</td>
+			<td>
+				responses.daily.uv
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The numerical UV index.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">UV Index Description</div>
+			</td>
+			<td>
+				responses.daily.uvDesc
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>A description of the meaning of the UV index.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Forecast Date</div>
+			</td>
+			<td>
+				responses.daily.created
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>The datetime at which the daily forecast was derived.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Sunrise Time</div>
+			</td>
+			<td>
+				responses.almanac.sunrise
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>Time of sunrise on the day of this forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Sunset Time</div>
+			</td>
+			<td>
+				responses.almanac.sunset
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>Time of sunset on the day of this forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Moonrise Time</div>
+			</td>
+			<td>
+				responses.almanac.moonrise
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>Time of moonrise on the day of this forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Moonset Time</div>
+			</td>
+			<td>
+				responses.almanac.moonset
+			</td>
+			<td>
+				date-time
+			</td>
+			<td>
+				<p>Time of moonset on the day of this forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Moon Phase</div>
+			</td>
+			<td>
+				responses.almanac.moonPhase
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The phase of the moon the day of this forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Moon Phase Code</div>
+			</td>
+			<td>
+				responses.almanac.moonPhaseCode
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The code representing the phase of the moon.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Latitude</div>
+			</td>
+			<td>
+				responses.source.coordinates.lat
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The latitude of the location.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Longitude</div>
+			</td>
+			<td>
+				responses.source.coordinates.lon
+			</td>
+			<td>
+				float
+			</td>
+			<td>
+				<p>The longitude of the location.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Location</div>
+			</td>
+			<td>
+				responses.source.location
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>The location for which provider created the forecast.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Pressure Units</div>
+			</td>
+			<td>
+				units.pressure
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for pressure measurements.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Temperature Units</div>
+			</td>
+			<td>
+				units.temperature
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for temperature measurements.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Speed Units</div>
+			</td>
+			<td>
+				units.speed
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for speed measurements.</p>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="parameterName">Distance Units</div>
+			</td>
+			<td>
+				units.distance
+			</td>
+			<td>
+				string
+			</td>
+			<td>
+				<p>Units used for distance measurements.</p>
+
+			</td>
+		</tr>
+</tbody></table>
+</div>
+</div>
+					
+		<div
+			id="ms--inline-notifications"
+			class="margin-block-xs"
+			data-bi-name="inline-notification"
+		></div>
+	 
+		<div
+			id="assertive-live-region"
+			role="alert"
+			aria-live="assertive"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+		<div
+			id="polite-live-region"
+			role="status"
+			aria-live="polite"
+			class="visually-hidden"
+			aria-relevant="additions"
+			aria-atomic="true"
+		></div>
+	
+					
+				</div>
+				 
+			</div>
+		
+				</main>

@@ -1,0 +1,209 @@
+# Every claim the tool makes about Microsoft behaviour or current practice lives here.
+# `statement` is written in our own words. `evidence` holds short phrases that must appear
+# on the source page: pipeline/verify_facts.py checks them on every refresh, and a missing
+# phrase marks the fact as "source changed" on the site and raises an issue for review.
+
+sources:
+  classification: {title: "Connector classification", url: "https://learn.microsoft.com/en-us/power-platform/admin/dlp-connector-classification"}
+  strategy: {title: "Implement a data policy strategy", url: "https://learn.microsoft.com/en-us/power-platform/guidance/adoption/dlp-strategy"}
+  overview: {title: "Data policies overview", url: "https://learn.microsoft.com/en-us/power-platform/admin/wp-data-loss-prevention"}
+  manage: {title: "Manage data policies", url: "https://learn.microsoft.com/en-us/power-platform/admin/prevent-data-loss"}
+  combined: {title: "Combined effect of multiple data policies", url: "https://learn.microsoft.com/en-us/power-platform/admin/dlp-combined-effect-multiple-policies"}
+  action: {title: "Connector action control", url: "https://learn.microsoft.com/en-us/power-platform/admin/connector-action-control"}
+  endpoint: {title: "Connector endpoint filtering", url: "https://learn.microsoft.com/en-us/power-platform/admin/connector-endpoint-filtering"}
+  acp: {title: "Advanced connector policies", url: "https://learn.microsoft.com/en-us/power-platform/admin/advanced-connector-policies"}
+  acpapi: {title: "Manage advanced connector policies programmatically", url: "https://learn.microsoft.com/en-us/power-platform/admin/programmability-tutorial-manage-advanced-connector-policies"}
+  tenant: {title: "Cross-tenant inbound and outbound restrictions", url: "https://learn.microsoft.com/en-us/power-platform/admin/cross-tenant-restrictions"}
+  copilot: {title: "Configure data policies for agents", url: "https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention"}
+  desktop: {title: "Data policies for desktop flows", url: "https://learn.microsoft.com/en-us/power-automate/desktop-flows/data-loss-prevention"}
+  logicapps: {title: "Block connector usage in Azure Logic Apps", url: "https://learn.microsoft.com/en-us/azure/logic-apps/block-connections-connectors"}
+  smtppage: {title: "SMTP connector reference (example of a Shareable connection)", url: "https://learn.microsoft.com/en-us/connectors/smtp/"}
+  nist: {title: "NIST glossary: semi-quantitative assessment (from SP 800-30 Rev. 1)", url: "https://csrc.nist.gov/glossary/term/semi_quantitative_assessment"}
+  cox: {title: "Cox (2008), What's Wrong with Risk Matrices?, Risk Analysis 28(2)", url: "https://ideas.repec.org/a/wly/riskan/v28y2008i2p497-512.html"}
+  owasp: {title: "OWASP Citizen Development Top 10: Authorization Misuse", url: "https://owasp.org/www-project-citizen-development-top10-security-risks/content/2022/en/CD-SEC-03-Authorization-Misuse"}
+
+facts:
+  - id: groups
+    statement: Connectors in different data groups cannot be used together in one app or flow. Connectors in the same group can.
+    source: classification
+    evidence: ["can't share data among connectors that are located in different groups"]
+  - id: personal
+    statement: Microsoft advises classifying connectors that host business data as Business and those that host personal-use data as Non-Business.
+    source: classification
+    evidence: ["Classify connectors that host personal-use data as"]
+  - id: labels
+    statement: The names Business and Non-Business are only labels. What matters is which connectors share a group.
+    source: strategy
+    evidence: ["The grouping of the connectors themselves is of significance"]
+  - id: default-group
+    statement: Microsoft advises keeping Non-Business as the default group, then moving new connectors to Business or Blocked after evaluating them.
+    source: classification
+    evidence: ["keep Non-Business as the default group"]
+  - id: nonblockable
+    statement: A published list of Microsoft connectors cannot be blocked with classic data policies. They can only be classified as Business or Non-Business.
+    source: classification
+    evidence: ["connectors can't be blocked by using data policies"]
+  - id: blockable
+    statement: All third-party connectors can be blocked. All Microsoft-owned premium connectors can be blocked except Dataverse.
+    source: classification
+    evidence: ["You can block all third-party connectors", "except Microsoft Dataverse"]
+  - id: http-child
+    statement: Child flows share an internal dependency with the HTTP connector, so its grouping can affect child flows. Microsoft suggests Non-Business or Blocked in shared environments, with dedicated environments and a restricted maker list for those who need it.
+    source: classification
+    evidence: ["child flows share an internal dependency with the HTTP connector", "create dedicated environments where makers can use HTTP connectors"]
+  - id: content-conversion
+    statement: The Content Conversion connector is not available for classification through data policies.
+    source: classification
+    evidence: ["not available for classification through data policies"]
+  - id: custom-connectors
+    statement: Tenant admins classify custom connectors by host URL pattern. Environment admins classify them by name. A custom connector with no specific rule falls to the default group.
+    source: classification
+    evidence: ["classifying custom connectors by their Host URL endpoints", "aren't explicitly classified go under the default group"]
+  - id: baseline-shared
+    statement: For shared productivity environments, Microsoft recommends a policy limited to Microsoft 365 and other standard microservices that blocks everything else, and that also applies to new environments.
+    source: strategy
+    evidence: ["limited to Microsoft 365 and other standard microservices", "also applies to any new environments"]
+  - id: baseline-team
+    statement: Microsoft recommends more permissive policies for chosen team environments, which could allow connectors such as Azure services.
+    source: strategy
+    evidence: ["allow makers to use connectors like Azure services"]
+  - id: baseline-production
+    statement: For production environments, Microsoft recommends excluding them from the shared policies and working with the business unit to establish which connectors and combinations they use.
+    source: strategy
+    evidence: ["establish which connectors and connector combinations they use"]
+  - id: few-policies
+    statement: Microsoft recommends a minimal number of policies per environment, managed centrally at tenant level, because all applicable policies are evaluated together.
+    source: strategy
+    evidence: ["Create a minimal number of policies per environment", "evaluated together"]
+  - id: most-restrictive
+    statement: When several policies apply to an environment, the most restrictive result is imposed. Environment policies cannot override tenant-wide policies.
+    source: strategy
+    evidence: ["the most restrictive policy applies", "can't override tenant-wide data policies"]
+  - id: fragmentation
+    statement: Different Business and Non-Business choices across policies are combined, and the most restrictive grouping is imposed.
+    source: combined
+    evidence: ["most restrictive grouping is finally imposed"]
+  - id: no-connection-control
+    statement: Data policies know the connector, but not the connection. They cannot tell whether a connector points at a development, test or production system.
+    source: strategy
+    evidence: ["they don't control connections made using the connector"]
+  - id: no-user-scope
+    statement: Data policies apply at environment or tenant level, never at user level.
+    source: strategy
+    evidence: ["can't be applied at the user level"]
+  - id: exceptions
+    statement: Microsoft describes three ways to handle an exception, including denying it or creating a use-case-specific policy for the excluded environment.
+    source: strategy
+    evidence: ["Deny the request", "create a use case-specific policy"]
+  - id: runtime-impact
+    statement: Limiting a connector or its actions affects makers and also apps, flows and agents that already exist.
+    source: overview
+    evidence: ["both the maker experience and the execution of previously created apps"]
+  - id: saved-credential
+    statement: A connection is a saved credential, stored in the environment that hosts the app or flow.
+    source: overview
+    evidence: ["These connections represent a saved credential"]
+  - id: publisher-owner
+    statement: The publisher of a connector can differ from the owner of the service. Microsoft can publish the Salesforce connector while Salesforce owns the service.
+    source: manage
+    evidence: ["can be different from the service owner"]
+  - id: action-control
+    statement: Connector action control allows or blocks individual actions and triggers on blockable connectors. It is not available for unblockable or custom connectors. A default setting decides how future actions are treated.
+    source: action
+    evidence: ["for all blockable connectors", "any new connector actions"]
+  - id: trigger-powershell
+    statement: Allowing or blocking individual triggers is currently available only through PowerShell.
+    source: action
+    evidence: ["individual triggers is currently available only via PowerShell"]
+  - id: endpoint-filtering
+    statement: Endpoint filtering lets admins control which endpoints makers can connect to. It is available only for HTTP, HTTP with Microsoft Entra ID, HTTP Webhook, SQL Server, Azure Blob Storage, SMTP, Browser Automation and UI Automation.
+    source: endpoint
+    evidence: ["exclusively available for the following connectors", "Browser Automation"]
+  - id: endpoint-static
+    statement: Endpoint filtering evaluates static endpoints only. It does not apply to environment variables, custom inputs or endpoints created at runtime.
+    source: endpoint
+    evidence: ["Only static endpoints are evaluated"]
+  - id: endpoint-preview
+    statement: Endpoint filtering is a preview feature, and Microsoft states that preview features are not meant for production use.
+    source: endpoint
+    evidence: ["This is a preview feature", "meant for production use"]
+  - id: acp-allowlist
+    statement: Advanced connector policies (ACP) use a strict allowlist. Every connector and action is blocked unless allowed.
+    source: acp
+    evidence: ["strict allowlist that blocks all connectors by default"]
+  - id: acp-new
+    statement: Under ACP, new connectors added to the platform are blocked automatically.
+    source: acp
+    evidence: ["New connectors added to the platform are automatically blocked"]
+  - id: acp-unsupported
+    statement: ACP covers certified connectors and MCP connectors. Custom and HTTP connectors are not yet supported, and virtual connectors will not be.
+    source: acp
+    evidence: ["Custom connectors and HTTP connectors aren't yet supported", "won't be added in the future"]
+  - id: acp-managed
+    statement: On non-managed environments, nonblockable connectors stay nonblockable under ACP. On Managed Environments, any connector or action can be blocked.
+    source: acp
+    evidence: ["the nonblockable connectors remain nonblockable", "you can block any connector or any action"]
+  - id: acp-mixed
+    statement: In mixed mode, ACP runs alongside classic data policies and the most restrictive settings from both are enforced. Microsoft recommends this while migrating.
+    source: acp
+    evidence: ["the most restrictive settings from both are enforced"]
+  - id: acp-only
+    statement: In ACP-only mode, classic data policies are ignored for that scope but not deleted.
+    source: acp
+    evidence: ["Classic data policies are ignored but not deleted"]
+  - id: acp-native-gap
+    statement: Mixed mode lets classic data policies provide action control and endpoint filtering until those features are native to ACP.
+    source: acp
+    evidence: ["until such time as those features are native to ACP"]
+  - id: acp-immediate
+    statement: ACP enforces the allowlist as soon as it is saved or published, so the allowed list must be curated first.
+    source: acp
+    evidence: ["as soon as you save it"]
+  - id: acp-no-groups
+    statement: ACP does not carry forward the Business and Non-Business categories, so allowed connectors are not separated from each other.
+    source: acp
+    evidence: ["business and nonbusiness categories in data policies isn't brought forward"]
+  - id: acp-shape
+    statement: An ACP policy holds a ConnectorManagement rule set with an AllowedConnectorList. Each entry names the connector and how its actions and connection types are governed.
+    source: acpapi
+    evidence: ["AllowedConnectorList", "AllowedActionsMode"]
+  - id: mcp-server
+    statement: ACP can block an MCP server as a whole. Control over individual MCP tools is not available.
+    source: acp
+    evidence: ["granular control over individual MCP tools"]
+  - id: tenant-isolation
+    statement: Power Platform tenant isolation only works for connectors that use Microsoft Entra ID-based authentication.
+    source: tenant
+    evidence: ["only works for connectors using Microsoft Entra ID-based authentication"]
+  - id: tenant-ado
+    statement: A known issue means tenant isolation is not enforced for connections made with the Azure DevOps connector.
+    source: tenant
+    evidence: ["known issue with Azure DevOps connector"]
+  - id: logic-apps
+    statement: Azure Logic Apps connector use is blocked through Azure Policy, which is a separate control from Power Platform data policies.
+    source: logicapps
+    evidence: ["With Azure Policy, you can define and enforce policies"]
+  - id: desktop-suspended
+    statement: A desktop flow that violates a data policy is marked as suspended and cannot be run.
+    source: desktop
+    evidence: ["will be marked as suspended"]
+  - id: copilot-scope
+    statement: Data policies govern Copilot Studio agents, including sign-in requirements, HTTP requests, publishing channels, skills and the use of connectors as tools.
+    source: copilot
+    evidence: ["Chat without Microsoft Entra ID authentication in Copilot Studio", "Direct Line channels in Copilot Studio", "Skills with Copilot Studio"]
+  - id: shareable
+    statement: With a Shareable authentication type, the connection is shared when a Power App is shared with another user.
+    source: smtppage
+    evidence: ["If the power app is shared with another user, connection is shared as well"]
+  - id: semi-quant
+    statement: NIST describes semi-quantitative assessment as using bins, scales or representative numbers whose values and meanings do not carry over to other contexts.
+    source: nist
+    evidence: ["not maintained in other contexts"]
+  - id: matrices
+    statement: Cox shows that risk matrices can give identical ratings to very different risks and can rate smaller risks above larger ones.
+    source: cox
+    evidence: ["range compression"]
+  - id: owasp-risks
+    statement: OWASP lists authorization misuse among the top risks of citizen development, including credentials that are shared across applications.
+    source: owasp
+    evidence: ["Authorization Misuse"]

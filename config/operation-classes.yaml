@@ -1,0 +1,70 @@
+# Each operation gets one primary class. Phrases for admin and raw are tested first. After that the
+# leftmost classifying word in the display name decides, so "Get message" is read and "Delete message"
+# is delete. If the name has no classifying word, the operation ID is tried in the same way.
+# The accuracy of these rules is measured on every refresh against the HTTP methods in
+# Microsoft's published connector definitions, and shown on the Method page.
+order: [admin, raw, delete, send, write, read]
+
+classes:
+  admin:
+    label: Administers platform, identity or access
+    phrases:
+      - assign role
+      - remove role
+      - grant permission
+      - revoke
+      - admin
+      - administrator
+      - security group
+      - tenant settings
+      - environment settings
+      - conditional access
+      - reset password
+      - service principal
+      - app registration
+      - dlp policy
+      - data policy
+    connectors: [powerplatformforadmins, powerplatformadminv2, powerappsforadmins, flowmanagement, powerappsforappmakers]
+  raw:
+    label: Runs raw requests, queries, scripts or commands
+    phrases:
+      - http request
+      - send http
+      - invoke http
+      - invokehttp
+      - httprequest
+      - graph http
+      - rest api call
+      - custom api call
+      - execute query
+      - run query
+      - native query
+      - passthrough
+      - pass through
+      - sql query
+      - execute sql
+      - execute a sql
+      - stored procedure
+      - run script
+      - execute script
+      - run a script
+      - execute command
+      - run command
+      - run powershell
+      - powershell
+      - shell command
+      - execute javascript
+      - raw query
+      - kql
+  delete:
+    label: Deletes or removes data
+    words: [delete, deletes, deleted, remove, removes, purge, purges, erase, wipe, truncate, drop, destroy]
+  send:
+    label: Sends or shares data outward
+    words: [send, sends, sent, tweet, publish, publishes, broadcast, notify, reply, forward, invite, share, shares, post, posts]
+  write:
+    label: Creates or changes data
+    words: [create, creates, add, adds, update, updates, set, sets, insert, upsert, upload, uploads, put, patch, modify, edit, change, move, copy, rename, assign, enable, disable, start, stop, cancel, approve, reject, submit, generate, convert, merge, write, save, register, enroll, complete, close, open, lock, unlock, restore, sync, import, trigger, run, execute, invoke, process, new, make, replace, append, attach, schedule, book, pause, resume]
+  read:
+    label: Reads data
+    words: [get, gets, list, lists, search, searches, find, finds, retrieve, retrieves, fetch, read, reads, lookup, look, query, check, count, download, export, view, show, describe, validate, verify, analyze, analyse, detect, translate, summarize, summarise, extract, compare, calculate, info, details, status, history, report, browse]

@@ -1,0 +1,103 @@
+name: Weekly refresh
+
+on:
+  schedule:
+    # Monday 05:17 UTC. Off the hour, because scheduled runs on the hour can be delayed.
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    outputs:
+      refreshed: ${{ steps.pipeline.outcome == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r requirements.txt
+      - name: Restore page cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/pages
+          key: learn-pages-${{ github.run_id }}
+          restore-keys: learn-pages-
+      - name: Restore ETags
+        uses: actions/cache@v4
+        with:
+          path: .cache/etags.json
+          key: learn-etags-${{ github.run_id }}
+          restore-keys: learn-etags-
+      - name: Crawl, derive and write data
+        id: pipeline
+        run: python -m pipeline.run
+      - name: Test the new data
+        run: |
+          python -m pytest pipeline/tests -q
+          node --test tests/engine.test.mjs
+          python -m pipeline.style_lint
+      - name: Commit data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "Weekly data refresh $(date -u +%F)"
+            git push
+          fi
+      - name: Open or update the review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if grep -qE "New: [1-9]|removed: [1-9]|changed: [1-9]|Checks that need attention|Source pages that changed" .cache/report.md; then
+            title="Connector review: $(date -u +%F)"
+            gh issue create --title "$title" --body-file .cache/report.md
+          fi
+      - name: Report a failed refresh
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "The weekly refresh failed, so the last good data stays live."; echo; echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; echo; cat .cache/report.md 2>/dev/null || true; } > failure.md
+          gh issue create --title "Weekly refresh failed: $(date -u +%F)" --body-file failure.md
+
+  deploy:
+    needs: refresh
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pipeline.build_site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
