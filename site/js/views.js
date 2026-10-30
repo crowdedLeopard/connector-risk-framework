@@ -1,6 +1,6 @@
 // Page views. Every number on the site is computed from the data at render time.
-import { EXPOSURES, EXPOSURE_BY_ID, GROUPS, PRESETS, TOLERANCES, TOLERANCE_LABELS, TREATMENTS, ZONES, acpDraft, actionRulesDraft, defaultSettings, evaluate, exposureCounts, summarise } from "./engine.js";
-import { announce, bar, cite, connectorDetail, connectorDetails, csv, download, fmt, h, icon, legend, pill, plural, resultsFor, saveSettings, store } from "./ui.js";
+import { EXPOSURES, EXPOSURE_BY_ID, PRESETS, TOLERANCE_LABELS, TREATMENTS, ZONES, evaluate, summarise } from "./engine.js";
+import { announce, bar, cite, connectorDetail, csv, download, fmt, h, pill, plural, product, productIcon, productName, resultsFor, saveSettings, store, tile } from "./ui.js";
 
 const safeUrl = (url) => (/^https?:\/\//i.test(url ?? "") ? url : "");
 const zoneById = (id) => ZONES.find((z) => z.id === id);
@@ -17,60 +17,69 @@ function zoneSelect(id = "zone-select") {
   return `<label class="field" for="${id}">Environment zone<select id="${id}">${ZONES.map((z) => `<option value="${z.id}" ${store.zone === z.id ? "selected" : ""}>${h(z.label)}</option>`).join("")}</select></label>`;
 }
 
-function zoneBars() {
-  return ZONES.map((z) => {
-    const counts = summarise(resultsFor(z.id));
-    return `<div class="bar-row"><div class="bar-label"><span>${h(z.label)}</span></div>${bar(counts)}</div>`;
-  }).join("") + legendAll();
-}
+const arrowDown = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg>';
 
 function legendAll() {
   return `<ul class="legend">${Object.keys(TREATMENTS).map((k) => `<li><i class="seg-${k}"></i>${h(TREATMENTS[k].label)}</li>`).join("")}</ul>`;
 }
 
 /* ---------- Home ---------- */
+const GALLERY = ["commondataserviceforapps", "microsoftcopilotstudio", "powerappsforadmins", "powerappsforappmakers", "flowmanagement", "microsoftflowforadmins", "powerplatformforadmins", "powerplatformadminv2"];
+
 export function renderHome(main) {
   const { counts, dataDate } = store.meta;
   const verified = store.facts.facts.filter((f) => f.status === "verified").length;
+  const preset = store.settings.preset ? PRESETS[store.settings.preset].label : "Customised limits";
   main.innerHTML = `
-    <section class="hero">
-      <h1>Decide what every Power Platform connector may do in your organisation.</h1>
-      <p class="lede">See what each connector can call and where it reaches. Set what your organisation will accept. Get a strategy that uses only controls Microsoft documents, with their limits stated.</p>
-      <div class="actions">
-        <a class="btn primary" href="#/criteria">Set what matters</a>
-        <a class="btn" href="#/connectors">Browse ${fmt(counts.catalogue)} connectors</a>
+    <section class="hero-band on-dark">
+      <div class="wrap-inner hero-grid">
+        <div>
+          <p class="eyebrow">${productIcon("Power Platform")}For ${h(productName("Power Platform"))}</p>
+          <h1>Decide what every connector <span class="gradient-text">may do in your organisation.</span></h1>
+          <p class="lede">See what each connector can call and where it reaches. Set what you will accept. Get a strategy that uses only controls Microsoft documents, with their limits stated.</p>
+          <div class="actions">
+            <a class="btn primary" href="#/build/platform">Build my strategy</a>
+            <a class="btn ghost" href="#/connectors">Browse ${fmt(counts.catalogue)} connectors</a>
+          </div>
+          <p class="hero-note">An independent tool built from public Microsoft documentation. Not an official Microsoft assessment.</p>
+        </div>
+        <div class="flow" role="group" aria-label="How products, connectors and your limits relate">
+          <div class="flow-products">
+            ${["Power Apps", "Power Automate", "Copilot Studio"].map((p) => `<div class="glass flow-product">${productIcon(p)}<span>${h(productName(p))}</span></div>`).join("")}
+          </div>
+          <div class="flow-arrow" aria-hidden="true">${arrowDown}</div>
+          <div class="glass"><p class="flow-title">Use connectors</p><p class="flow-big">${fmt(counts.catalogue)} connectors, ${fmt(counts.operations)} operations</p></div>
+          <div class="flow-arrow" aria-hidden="true">${arrowDown}</div>
+          <div class="glass"><p class="flow-title">Your limits decide, by environment: ${h(preset)}</p>
+            ${ZONES.map((z) => `<div class="flow-zone"><span>${h(z.label)}</span>${bar(summarise(resultsFor(z.id)))}</div>`).join("")}
+            ${legendAll()}
+          </div>
+        </div>
       </div>
     </section>
-    <div class="stats">
+    <div class="stats hero-stats">
       <div class="stat"><b>${fmt(counts.catalogue)}</b><span>connectors on Microsoft Learn</span></div>
       <div class="stat"><b>${fmt(counts.operations)}</b><span>operations listed</span></div>
       <div class="stat"><b>${fmt(counts.operationsWithCall)}</b><span>operations with a published HTTP call</span></div>
       <div class="stat"><b>${verified} of ${store.facts.facts.length}</b><span>governance facts confirmed on their source pages on ${h(store.facts.checked)}</span></div>
     </div>
-    <div class="grid two">
-      <div class="card">
-        <h2 style="margin-top:0">Under your current settings</h2>
-        <p class="small muted">Preset: ${h(store.settings.preset ? PRESETS[store.settings.preset].label : "Customised")}. The same catalogue gives a different answer in each zone.</p>
-        ${zoneBars()}
-        <p class="small" style="margin-top:1rem"><a href="#/strategy">See the strategy this produces</a></p>
-      </div>
-      <div class="card">
-        <h2 style="margin-top:0">Find a connector</h2>
-        <form id="home-search" role="search">
-          <label class="field" for="home-q">Connector name or publisher<input id="home-q" type="search" autocomplete="off"></label>
-          <button class="btn small" style="margin-top:.6rem" type="submit">Search</button>
-        </form>
-        <p class="small muted" style="margin-top:1rem">Examples:
-          ${["sharepointonline", "sql", "gmail", "smtp", "openaiip", "powerplatformforadmins"].map((s) => `<a href="#/c/${s}">${h(store.bySlug.get(s)?.n ?? s)}</a>`).join(", ")}.</p>
-      </div>
+
+    <h2>Three questions to a strategy</h2>
+    <div class="journey">
+      <a class="card journey-card" href="#/build/platform"><span class="layer-tag fact">Step 1</span><h3>Your platform</h3><p class="small" style="margin:0">Which products you govern and which controls you have. This decides what can be enforced.</p></a>
+      <a class="card journey-card" href="#/build/appetite"><span class="layer-tag yours">Step 2</span><h3>Your risk appetite</h3><p class="small" style="margin:0">Compare three starting points by what each one does to the catalogue, then pick the closest.</p></a>
+      <a class="card journey-card" href="#/build/limits"><span class="layer-tag derived">Step 3</span><h3>Your limits</h3><p class="small" style="margin:0">Fine-tune every trait for shared, team and production environments, and watch the result change.</p></a>
+      <a class="card journey-card" href="#/strategy"><span class="layer-tag result">Result</span><h3>Your strategy</h3><p class="small" style="margin:0">Ordered steps with sources, connector lists, and drafts for an administrator to review.</p></a>
     </div>
-    <h2>How it reaches an answer</h2>
-    <div class="grid four">
-      <div class="card"><span class="layer-tag fact">Fact</span><h3 style="margin-top:0">What Microsoft states</h3><p class="small">Operations, authentication types, publisher and available controls, each with its source.</p></div>
-      <div class="card"><span class="layer-tag derived">Derived</span><h3 style="margin-top:0">What the facts show</h3><p class="small">Whether an operation reads, deletes or sends, and where data can go. The rule and evidence are shown, and accuracy is measured.</p></div>
-      <div class="card"><span class="layer-tag choice">Your choice</span><h3 style="margin-top:0">What you will accept</h3><p class="small">Your limits for each zone. Only your organisation can set these, so the tool does not pretend to know them.</p></div>
-      <div class="card"><span class="layer-tag result">Result</span><h3 style="margin-top:0">What to do</h3><p class="small">A treatment for each connector, tied to a control that can carry it out, or a clear statement that none can.</p></div>
-    </div>
+
+    <h2>Find a connector</h2>
+    <form id="home-search" role="search" class="card" style="display:flex;gap:.7rem;align-items:flex-end;flex-wrap:wrap">
+      <label class="field" for="home-q" style="flex:1;min-width:220px">Connector name or publisher<input id="home-q" type="search" autocomplete="off"></label>
+      <button class="btn primary" type="submit">Search</button>
+    </form>
+    <h3>The Power Platform's own connectors</h3>
+    <div class="gallery">${GALLERY.filter((s) => store.bySlug.has(s)).map((s) => `<a href="#/c/${s}">${tile(s, store.bySlug.get(s).n)}<span>${h(store.bySlug.get(s).n)}</span></a>`).join("")}</div>
+
     <h2>Why there is no risk score</h2>
     <div class="prose">
       <p>A score out of 100 looks precise, but weights and cut-offs would have to be invented, and public documentation holds no data on how often connectors cause incidents. Ratings built this way can also mislead: identical ratings can hide very different risks. ${cite(["matrices", "semi-quant"])}</p>
@@ -117,29 +126,36 @@ function filterCatalogue(results) {
 const ORIGIN_LABELS = { microsoft: "Microsoft service", "third-party": "Third-party service", "maker-defined": "Destination set by maker", unstated: "Not stated on Learn" };
 const PUBLISHER_LABELS = { microsoft: "Microsoft", independent: "Independent publisher", other: "Other publisher" };
 
+const PRODUCT_FILTERS = ["Power Apps", "Power Automate", "Copilot Studio", "Logic Apps"];
+
 export function renderCatalogue(main) {
   const s = catalogueState;
   const option = (value, label, current) => `<option value="${h(value)}" ${current === value ? "selected" : ""}>${h(label)}</option>`;
   main.innerHTML = `
     <h1>Connectors</h1>
-    <p class="lede">Every connector on Microsoft Learn, plus built-in items that appear in data policies. The treatment shown reflects <a href="#/criteria">your settings</a>.</p>
-    <div class="filters no-print">
+    <p class="lede">Every connector on Microsoft Learn, plus built-in items that appear in data policies. The treatment shown reflects <a href="#/build/limits">your settings</a>.</p>
+    <div class="filter-panel no-print">
+    <div class="product-filter" role="group" aria-label="Filter by product">
+      <button type="button" data-product="" aria-pressed="${!s.product}">All products</button>
+      ${PRODUCT_FILTERS.map((p) => `<button type="button" data-product="${h(p)}" aria-pressed="${s.product === p}">${productIcon(p)}${h(productName(p))}</button>`).join("")}
+    </div>
+    <div class="filters">
       <label class="field" for="f-q">Search<input id="f-q" type="search" value="${h(s.q)}" autocomplete="off"></label>
       ${zoneSelect()}
       <label class="field" for="f-treatment">Treatment<select id="f-treatment"><option value="">All</option>${Object.keys(TREATMENTS).map((k) => option(k, TREATMENTS[k].label, s.treatment)).join("")}</select></label>
       <label class="field" for="f-exposure">Has trait<select id="f-exposure"><option value="">Any</option>${EXPOSURES.filter((e) => e.id !== "sensitive-category").map((e) => option(e.id, e.label, s.exposure)).join("")}</select></label>
       <label class="field" for="f-origin">Service<select id="f-origin"><option value="">All</option>${Object.keys(ORIGIN_LABELS).map((k) => option(k, ORIGIN_LABELS[k], s.origin)).join("")}</select></label>
       <label class="field" for="f-publisher">Publisher<select id="f-publisher"><option value="">All</option>${Object.keys(PUBLISHER_LABELS).map((k) => option(k, PUBLISHER_LABELS[k], s.publisher)).join("")}</select></label>
-      <label class="field" for="f-product">Product<select id="f-product"><option value="">All</option>${["Power Apps", "Power Automate", "Copilot Studio", "Logic Apps"].map((p) => option(p, p, s.product)).join("")}</select></label>
       <label class="field" for="f-category">Category on Learn<select id="f-category"><option value="">All</option>${store.meta.categories.map((c) => option(c, c, s.category)).join("")}</select></label>
       <label class="field" for="f-licence">Licence class<select id="f-licence"><option value="">All</option>${option("standard", "Standard", s.licence)}${option("premium", "Premium", s.licence)}</select></label>
       <label class="field" for="f-sort">Sort by<select id="f-sort">${option("name", "Name", s.sort)}${option("limits", "Your limits crossed", s.sort)}${option("treatment", "Treatment", s.sort)}${option("operations", "Number of operations", s.sort)}</select></label>
+    </div>
     </div>
     <div class="actions no-print" style="justify-content:space-between">
       <p id="result-count" class="small" style="margin:0" aria-live="polite"></p>
       <button class="btn small" id="export-view" type="button">Download this view as CSV</button>
     </div>
-    <div class="table-scroll" style="margin-top:.8rem"><table>
+    <div class="table-scroll table-card" style="margin-top:.8rem"><table>
       <caption class="visually-hidden">Connectors with their treatment for the chosen zone</caption>
       <thead><tr><th scope="col">Connector</th><th scope="col">Treatment</th><th scope="col" class="num">Your limits crossed</th><th scope="col">What it can do</th><th scope="col">Service</th></tr></thead>
       <tbody id="rows"></tbody>
@@ -154,7 +170,7 @@ export function renderCatalogue(main) {
     count.textContent = `${plural(rows.length, "connector")} match. Zone: ${zoneById(store.zone).label}.`;
     body.innerHTML = rows.slice(0, s.shown).map(({ c, r }) => {
       const chips = CLASS_ORDER.filter((k) => c.cc[k] && SHORT_CLASS[k]).map((k) => `<span class="chip ${["admin", "raw"].includes(k) ? "strong" : ""}">${SHORT_CLASS[k]} ${c.cc[k]}</span>`).join("");
-      return `<tr><td><a href="#/c/${encodeURIComponent(c.s)}">${h(c.n)}</a><span class="sub">${h(c.k || c.p)}</span></td>
+      return `<tr><td><div class="name-cell">${tile(c.s, c.n, true)}<div><a href="#/c/${encodeURIComponent(c.s)}">${h(c.n)}</a><span class="sub">${h(c.k || c.p)}</span></div></div></td>
         <td>${pill(r.treatment)}${r.group && r.treatment !== "block" ? `<span class="sub">${h(r.group)} group</span>` : ""}</td>
         <td class="num">${r.redLines || ""}</td>
         <td>${chips || '<span class="muted small">Not listed</span>'}</td>
@@ -163,8 +179,15 @@ export function renderCatalogue(main) {
     more.hidden = rows.length <= s.shown;
     more.textContent = `Show ${fmt(Math.min(100, rows.length - s.shown))} more`;
   };
+  const productButtons = [...main.querySelectorAll("[data-product]")];
+  productButtons.forEach((button) => button.addEventListener("click", () => {
+    s.product = button.dataset.product;
+    s.shown = 50;
+    productButtons.forEach((b) => b.setAttribute("aria-pressed", b === button));
+    draw();
+  }));
   const bind = (id, key) => main.querySelector(id).addEventListener(id === "#f-q" ? "input" : "change", (e) => { s[key] = e.target.value; s.shown = 50; draw(); });
-  [["#f-q", "q"], ["#f-treatment", "treatment"], ["#f-exposure", "exposure"], ["#f-origin", "origin"], ["#f-publisher", "publisher"], ["#f-product", "product"], ["#f-category", "category"], ["#f-licence", "licence"], ["#f-sort", "sort"]].forEach(([id, key]) => bind(id, key));
+  [["#f-q", "q"], ["#f-treatment", "treatment"], ["#f-exposure", "exposure"], ["#f-origin", "origin"], ["#f-publisher", "publisher"], ["#f-category", "category"], ["#f-licence", "licence"], ["#f-sort", "sort"]].forEach(([id, key]) => bind(id, key));
   main.querySelector("#zone-select").addEventListener("change", (e) => { store.zone = e.target.value; draw(); });
   more.addEventListener("click", () => { s.shown += 100; draw(); });
   main.querySelector("#export-view").addEventListener("click", () => {
@@ -228,14 +251,14 @@ export async function renderConnector(main, slug) {
     const def = d.definition;
     main.innerHTML = `
       <p class="small no-print"><a href="#/connectors">All connectors</a></p>
-      <h1>${h(d.name)}</h1>
-      <p class="lede">${h(summarySentence(d))}</p>
+      <div class="connector-head">${tile(slug, d.name)}<div><h1>${h(d.name)}</h1>
+      <p class="lede" style="margin:0">${h(summarySentence(d))}</p></div></div>
       <p>
         ${d.kind ? `<span class="chip">${h(d.kind)}</span>` : ""}
         ${d.publisher ? `<span class="chip">Publisher: ${h(d.publisher)}</span>` : ""}
         ${d.premium ? '<span class="chip">Premium</span>' : ""}${d.preview ? '<span class="chip">Preview</span>' : ""}${d.deprecated ? '<span class="chip">Deprecated</span>' : ""}${d.mcp ? '<span class="chip">MCP server</span>' : ""}
-        ${d.services.map((s) => `<span class="chip">${h(s)}</span>`).join("")}
       </p>
+      ${d.services.length ? `<div class="works-in"><span class="label">Works in</span>${d.services.map((name) => product(name)).join("")}</div>` : ""}
       ${d.parseFailed ? '<div class="callout"><strong>This page could not be read on the last refresh.</strong> Only the overview listing is available here, so operations and authentication are missing. Read the page on Microsoft Learn.</div>' : ""}
       ${d.learnUrl ? `<p class="small"><a href="${h(d.learnUrl)}" target="_blank" rel="noopener">Read the full description on Microsoft Learn</a>. First seen by this tool on ${h(d.firstSeen)}.</p>` : ""}
 
@@ -247,7 +270,7 @@ export async function renderConnector(main, slug) {
           ${r.redLines ? `<p class="small" style="margin:0">Limits of yours it crosses: ${r.redLines}.</p>` : ""}
           ${r.why.length || r.steps.length ? `<ul>${why(r.why)}${why(r.steps)}</ul>` : '<p class="small muted" style="margin:0">Nothing you have set applies here.</p>'}
         </div>`).join("")}</div>
-      <p class="small muted" style="margin-top:.7rem">Based on <a href="#/criteria">your settings</a>. Change them and these results update.</p>
+      <p class="small muted" style="margin-top:.7rem">Based on <a href="#/build/limits">your settings</a>. Change them and these results update.</p>
 
       <fieldset class="card no-print" style="margin-top:1rem">
         <legend class="group-title" style="float:left;margin:0 0 .5rem">Your decision for this connector</legend>
@@ -310,385 +333,6 @@ export async function renderConnector(main, slug) {
   };
   draw();
   return d.name;
-}
-
-/* ---------- What matters ---------- */
-function impactPanel() {
-  const results = resultsFor(store.zone);
-  const counts = summarise(results);
-  return `<h2 style="margin:0 0 .3rem;font-size:1.1rem">Effect on ${h(zoneById(store.zone).label)}</h2>
-    ${bar(counts)}${legend(counts)}
-    <hr style="border:0;border-top:1px solid var(--line);margin:1rem 0">
-    ${ZONES.filter((z) => z.id !== store.zone).map((z) => `<div class="bar-row"><div class="bar-label small"><span>${h(z.label)}</span></div>${bar(summarise(resultsFor(z.id)))}</div>`).join("")}
-    <p class="small" style="margin:1rem 0 0"><a href="#/strategy">See the strategy</a></p>`;
-}
-
-export function renderCriteria(main) {
-  const s = store.settings;
-  const ctx = s.context;
-  const counts = exposureCounts(store.index, s);
-  main.innerHTML = `
-    <h1>What matters to your organisation</h1>
-    <p class="lede">Choose what you will accept in each environment zone. The results update as you go. Nothing leaves this browser.</p>
-    <div class="split">
-      <div>
-        <h2 style="margin-top:1rem">1. Your platform</h2>
-        <p class="small muted">These decide which controls can carry out a decision.</p>
-        <fieldset class="preset-grid" id="policy-model">
-          <legend class="visually-hidden">Policy model</legend>
-          ${[["classic", "Classic data policies", "Business, Non-Business and Blocked groups."], ["mixed", "ACP in mixed mode", "ACP and classic policies together. The most restrictive setting wins."], ["acp", "ACP only", "Classic policies are ignored for this scope."]].map(([v, l, t]) => `
-          <label class="radio-card"><input type="radio" name="policyModel" value="${v}" ${ctx.policyModel === v ? "checked" : ""}><span><strong>${l}</strong><br><span class="small muted">${t}</span></span></label>`).join("")}
-        </fieldset>
-        <p style="margin-top:.4rem">${cite(["acp-mixed", "acp-only"])}</p>
-        <label class="check"><input type="checkbox" id="ctx-managed" ${ctx.managed ? "checked" : ""}><span><strong>We use Managed Environments</strong><br><span class="small muted">Without them, nonblockable connectors stay nonblockable, even under ACP.</span> ${cite(["acp-managed"])}</span></label>
-        <label class="check"><input type="checkbox" id="ctx-logic" ${ctx.logicApps ? "checked" : ""}><span><strong>We use Azure Logic Apps</strong><br><span class="small muted">Adds Azure Policy to the strategy, because data policies do not cover it.</span> ${cite(["logic-apps"])}</span></label>
-        <label class="check"><input type="checkbox" id="ctx-copilot" ${ctx.copilot ? "checked" : ""}><span><strong>We build Copilot Studio agents</strong><br><span class="small muted">Adds agent controls to the strategy.</span> ${cite(["copilot-scope"])}</span></label>
-
-        <h2>2. Start from</h2>
-        <fieldset class="preset-grid" id="presets">
-          <legend class="visually-hidden">Starting point</legend>
-          ${Object.entries(PRESETS).map(([id, p]) => `<label class="radio-card"><input type="radio" name="preset" value="${id}" ${s.preset === id ? "checked" : ""}><span><strong>${h(p.label)}</strong><br><span class="small muted">${h(p.help)}</span></span></label>`).join("")}
-        </fieldset>
-        <p class="small muted" style="margin-top:.5rem" id="preset-note">${s.preset ? "" : "You have changed these settings from the preset."}</p>
-
-        <h2>3. What you will accept</h2>
-        <div class="tabs no-print" role="tablist" aria-label="Environment zone">
-          ${ZONES.map((z) => `<button role="tab" type="button" id="tab-${z.id}" aria-controls="tol-panel" aria-selected="${store.zone === z.id}" tabindex="${store.zone === z.id ? 0 : -1}" data-zone="${z.id}">${h(z.label)}</button>`).join("")}
-        </div>
-        <div id="tol-panel" role="tabpanel" aria-labelledby="tab-${store.zone}"></div>
-
-        <h2>4. Sensitive categories</h2>
-        <p class="small muted prose">Mark the categories that hold data you treat as sensitive, then set your limit under What your data needs. Publishers choose these categories, and ${fmt(store.meta.counts.catalogue - store.meta.counts.withCategories)} connectors have none, so this is a coarse signal.</p>
-        <fieldset class="chips-input"><legend class="visually-hidden">Sensitive categories</legend>
-          ${store.meta.categories.map((c) => `<label><input type="checkbox" name="sensitive" value="${h(c)}" ${s.sensitiveCategories.includes(c) ? "checked" : ""}>${h(c)}</label>`).join("")}
-        </fieldset>
-
-        <h2>5. Save or share</h2>
-        <div class="actions no-print">
-          <button class="btn" type="button" id="settings-export">Download settings</button>
-          <label class="btn" for="settings-import">Load settings<input class="visually-hidden" id="settings-import" type="file" accept="application/json,.json"></label>
-          <button class="btn" type="button" id="settings-reset">Reset to Microsoft's starting point</button>
-        </div>
-        <p class="small muted" style="margin-top:.6rem" id="override-count"></p>
-      </div>
-      <aside class="card sticky" id="impact" aria-label="Effect of your settings"></aside>
-    </div>`;
-
-  const impact = main.querySelector("#impact");
-  const panel = main.querySelector("#tol-panel");
-  const refresh = () => { impact.innerHTML = impactPanel(); main.querySelector("#override-count").textContent = `${plural(Object.keys(s.overrides).length, "connector decision")} saved. Set these on each connector's page.`; };
-  const markCustom = () => { s.preset = null; main.querySelectorAll('input[name="preset"]').forEach((i) => { i.checked = false; }); main.querySelector("#preset-note").textContent = "You have changed these settings from the preset."; };
-
-  const drawPanel = () => {
-    const tolerances = s.zones[store.zone];
-    panel.setAttribute("aria-labelledby", `tab-${store.zone}`);
-    panel.innerHTML = `<p class="small muted">${h(zoneById(store.zone).help)} ${cite(zoneById(store.zone).facts)}</p>` + GROUPS.map((group) => `
-      <div class="group-title">${h(group.label)}</div>
-      ${EXPOSURES.filter((e) => e.group === group.id).map((e) => `
-        <fieldset class="exposure-row">
-          <div><legend class="name">${h(e.label)}</legend><div class="help">${h(e.help)}</div>
-            <div class="meta">${plural(counts[e.id], "connector")} · ${h(e.basis)}${e.scope === "action" ? " · Can be limited action by action" : ""}</div></div>
-          <div class="segmented">${TOLERANCES.map((t) => `<label>${h(TOLERANCE_LABELS[t])}<input type="radio" name="tol-${e.id}" value="${t}" ${tolerances[e.id] === t ? "checked" : ""} data-exposure="${e.id}"></label>`).join("")}</div>
-        </fieldset>`).join("")}`).join("");
-  };
-
-  panel.addEventListener("change", (event) => {
-    const id = event.target.dataset.exposure;
-    if (!id) return;
-    s.zones[store.zone][id] = event.target.value;
-    markCustom();
-    saveSettings();
-    refresh();
-  });
-  const tabs = [...main.querySelectorAll('[role="tab"]')];
-  const selectTab = (tab) => {
-    store.zone = tab.dataset.zone;
-    tabs.forEach((t) => { t.setAttribute("aria-selected", t === tab); t.tabIndex = t === tab ? 0 : -1; });
-    drawPanel();
-    refresh();
-  };
-  tabs.forEach((tab, i) => {
-    tab.addEventListener("click", () => selectTab(tab));
-    tab.addEventListener("keydown", (e) => {
-      const next = { ArrowRight: i + 1, ArrowLeft: i - 1 }[e.key];
-      if (next === undefined) return;
-      const target = tabs[(next + tabs.length) % tabs.length];
-      target.focus();
-      selectTab(target);
-    });
-  });
-  main.querySelectorAll('input[name="policyModel"]').forEach((i) => i.addEventListener("change", (e) => { ctx.policyModel = e.target.value; saveSettings(); refresh(); }));
-  [["#ctx-managed", "managed"], ["#ctx-logic", "logicApps"], ["#ctx-copilot", "copilot"]].forEach(([id, key]) => main.querySelector(id).addEventListener("change", (e) => { ctx[key] = e.target.checked; saveSettings(); refresh(); }));
-  main.querySelectorAll('input[name="preset"]').forEach((i) => i.addEventListener("change", (e) => {
-    s.preset = e.target.value;
-    s.zones = structuredClone(PRESETS[e.target.value].zones);
-    main.querySelector("#preset-note").textContent = "";
-    saveSettings();
-    drawPanel();
-    refresh();
-    announce(`Applied ${PRESETS[e.target.value].label}.`);
-  }));
-  main.querySelectorAll('input[name="sensitive"]').forEach((i) => i.addEventListener("change", () => {
-    s.sensitiveCategories = [...main.querySelectorAll('input[name="sensitive"]:checked')].map((x) => x.value);
-    saveSettings();
-    Object.assign(counts, exposureCounts(store.index, s));
-    drawPanel();
-    refresh();
-  }));
-  main.querySelector("#settings-export").addEventListener("click", () => download("connector-risk-settings.json", JSON.stringify(s, null, 2)));
-  main.querySelector("#settings-reset").addEventListener("click", () => {
-    store.settings = defaultSettings();
-    saveSettings();
-    renderCriteria(main);
-    announce("Settings reset.");
-  });
-  main.querySelector("#settings-import").addEventListener("change", async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    try {
-      const loaded = validSettings(JSON.parse(await file.text()));
-      store.settings = loaded;
-      saveSettings();
-      renderCriteria(main);
-      announce("Settings loaded.");
-    } catch (error) {
-      announce(`That file could not be loaded: ${error.message}`);
-      main.querySelector("#override-count").textContent = `That file could not be loaded: ${error.message}`;
-    }
-  });
-  drawPanel();
-  refresh();
-  return "What matters";
-}
-
-function validSettings(input) {
-  const base = defaultSettings();
-  if (input?.version !== 1 || typeof input.zones !== "object") throw new Error("it is not a settings file from this tool.");
-  for (const z of ZONES) {
-    for (const e of EXPOSURES) {
-      const value = input.zones?.[z.id]?.[e.id];
-      if (TOLERANCES.includes(value)) base.zones[z.id][e.id] = value;
-    }
-  }
-  const ctx = input.context ?? {};
-  base.context = {
-    policyModel: ["classic", "mixed", "acp"].includes(ctx.policyModel) ? ctx.policyModel : "classic",
-    managed: ctx.managed === true, logicApps: ctx.logicApps === true, copilot: ctx.copilot !== false,
-  };
-  base.sensitiveCategories = Array.isArray(input.sensitiveCategories) ? input.sensitiveCategories.filter((c) => store.meta.categories.includes(c)) : [];
-  base.overrides = Object.fromEntries(Object.entries(input.overrides ?? {}).filter(([slug, v]) => store.bySlug.has(slug) && ["approved", "allow", "block"].includes(v)));
-  base.preset = null;
-  return base;
-}
-
-/* ---------- Strategy ---------- */
-function zoneLists(zone) {
-  const results = resultsFor(zone.id);
-  const lists = { block: [], retain: [], modify: [], allow: [], outside: [] };
-  store.index.forEach((c, i) => lists[results[i].treatment].push({ c, r: results[i] }));
-  return lists;
-}
-
-function strategySteps() {
-  const ctx = store.settings.context;
-  const acp = ctx.policyModel !== "classic";
-  const data = Object.fromEntries(ZONES.map((z) => [z.id, zoneLists(z)]));
-  const anyActions = ZONES.flatMap((z) => data[z.id].modify.filter(({ r }) => r.steps.some((s) => s.kind.endsWith("actions"))));
-  const anyEndpoint = ZONES.flatMap((z) => data[z.id].modify.filter(({ r }) => r.steps.some((s) => s.kind === "endpoint")));
-  const retained = (zone) => data[zone].retain.length;
-  const steps = [];
-  const shared = data.shared;
-  const group = (list, name) => list.filter(({ r }) => r.group === name).length;
-  const nonBiz = group(shared.allow, "Non-Business") + group(shared.modify, "Non-Business");
-  const biz = group(shared.allow, "Business") + group(shared.modify, "Business");
-  steps.push({
-    title: acp ? "Curate an allowlist for shared environments" : "Set one tenant baseline for shared environments",
-    body: acp
-      ? `Allow ${fmt(biz + nonBiz)} connectors and leave ${fmt(shared.block.length)} off the list. ACP enforces the list as soon as it is saved, so curate it first, and start in mixed mode.`
-      : `Create one tenant-level policy covering all environments except those you choose to exclude. Under your settings it blocks ${fmt(shared.block.length)} connectors, places ${fmt(biz)} in Business and ${fmt(nonBiz)} in Non-Business. It also applies to new environments.`,
-    facts: acp ? ["acp-immediate", "acp-mixed"] : ["baseline-shared", "few-policies"],
-  });
-  steps.push({
-    title: "Keep policies few, and model them before publishing",
-    body: "All policies that apply to an environment are evaluated together, and the most restrictive result wins. Use environment-level policies only for exceptions and custom connectors.",
-    facts: ["few-policies", "most-restrictive", "fragmentation"],
-  });
-  steps.push({
-    title: "Give team and production environments their own policies",
-    body: `Exclude them from the shared baseline. Dedicated team environments can then block ${fmt(data.team.block.length)} connectors, and production ${fmt(data.production.block.length)}. In production, treat this as the outer limit and agree the actual connectors for each solution with its business unit.`,
-    facts: ["baseline-team", "baseline-production"],
-  });
-  steps.push(acp ? {
-    title: "Add new connectors to the allowlist deliberately",
-    body: "New connectors are blocked automatically under ACP. Use the Changes page to review what has arrived each week.",
-    facts: ["acp-new"], link: { href: "#/changes", text: "See weekly changes" },
-  } : {
-    title: "Review new connectors every week",
-    body: "Keep Non-Business as the default group. Move each new connector to Business or Blocked after evaluating it. Use the Changes page to see what arrived.",
-    facts: ["default-group"], link: { href: "#/changes", text: "See weekly changes" },
-  });
-  if (anyActions.length) {
-    steps.push({
-      title: "Limit actions on the connectors you allow",
-      body: `Your settings limit actions on ${fmt(new Set(anyActions.map(({ c }) => c.s)).size)} connectors. Set the default for future actions deliberately. Individual triggers can only be managed through PowerShell.`,
-      facts: ["action-control", "trigger-powershell"], exports: true,
-    });
-  }
-  if (anyEndpoint.length) {
-    steps.push({
-      title: "Add endpoint filtering, and know its limits",
-      body: "Rules cover static endpoints only, not environment variables, custom inputs or endpoints created at runtime. The feature is in preview, so pair it with environment isolation.",
-      facts: ["endpoint-filtering", "endpoint-static", "endpoint-preview"],
-    });
-  }
-  steps.push({
-    title: "Plan for HTTP and custom connectors separately",
-    body: `Check child flows before reclassifying HTTP, because they share a dependency. Classify custom connectors by host URL pattern at tenant level, and by name at environment level.${acp ? " ACP does not cover either type yet, so keep classic policies for them." : ""}`,
-    facts: ["http-child", "custom-connectors", ...(acp ? ["acp-unsupported"] : [])],
-  });
-  const totalRetained = ZONES.reduce((sum, z) => sum + retained(z.id), 0);
-  if (totalRetained) {
-    steps.push({
-      title: "Decide what to do where no control can enforce your limit",
-      body: `${ZONES.map((z) => `${z.label}: ${fmt(retained(z.id))}`).join(". ")}. Most are core Microsoft connectors, which classic policies cannot block or limit. ${ctx.managed && acp ? "" : "ACP on a Managed Environment can restrict them. "}Otherwise, the risk owner must accept the position, or the limit must change.`,
-      facts: ["nonblockable", "action-control", "acp-managed"],
-    });
-  }
-  if (acp) {
-    steps.push({
-      title: "Watch for what ACP does differently",
-      body: "ACP has no Business and Non-Business separation, so allowed connectors can be combined. Do not switch to ACP-only mode until HTTP connectors, custom connectors and endpoint filtering are governed another way.",
-      facts: ["acp-no-groups", "acp-only", "acp-native-gap", "acp-unsupported"],
-    });
-  }
-  if (ctx.logicApps) {
-    const covered = store.index.filter((c) => c.ct.logicApps).length;
-    steps.push({ title: "Mirror your blocks in Azure Policy", body: `${fmt(covered)} connectors are available in Azure Logic Apps. Data policies do not reach them there, so add matching Azure Policy rules.`, facts: ["logic-apps"] });
-  }
-  if (ctx.copilot) {
-    steps.push({ title: "Decide agent controls per zone", body: "Decide on unauthenticated chat, HTTP requests, publishing channels and skills. Data policies govern each of these, and blocking one removes that capability from agents.", facts: ["copilot-scope", "acp-unsupported"] });
-  }
-  steps.push({
-    title: "Close the cross-tenant gap",
-    body: "Tenant isolation works only for connectors that use Microsoft Entra ID authentication, and a known issue leaves the Azure DevOps connector outside it. Use data policies for the rest.",
-    facts: ["tenant-isolation", "tenant-ado"],
-  });
-  steps.push({
-    title: "Check real usage before you change anything",
-    body: "Policy changes affect apps, flows and agents that already exist, and non-compliant desktop flows are suspended. This tool cannot see your tenant, so inventory usage first, test outside production and tell makers what is changing.",
-    facts: ["runtime-impact", "desktop-suspended"],
-  });
-  steps.push({
-    title: "Handle exceptions the documented way",
-    body: "Deny the request, change the policy, or move the environment out of the baseline and give it a policy for that use case. Give each exception an owner and a review date.",
-    facts: ["exceptions"],
-  });
-  return { steps, data };
-}
-
-export function renderStrategy(main) {
-  const { steps, data } = strategySteps();
-  const ctx = store.settings.context;
-  const modelLabel = { classic: "classic data policies", mixed: "ACP in mixed mode", acp: "ACP only" }[ctx.policyModel];
-  const acpAvailable = ctx.policyModel !== "classic";
-  main.innerHTML = `
-    <h1>Your connector strategy</h1>
-    <p class="lede">Generated from your settings: ${h(store.settings.preset ? PRESETS[store.settings.preset].label : "customised limits")}, using ${h(modelLabel)}${ctx.managed ? " on Managed Environments" : ", without Managed Environments"}.</p>
-    <div class="actions no-print"><a class="btn" href="#/criteria">Change settings</a><button class="btn" type="button" id="print-strategy">Print or save as PDF</button></div>
-
-    <h2>Where you end up</h2>
-    <div class="zone-cards">${ZONES.map((z) => {
-      const counts = summarise(resultsFor(z.id));
-      return `<div class="card zone-card"><h3>${h(z.label)}</h3>${bar(counts)}${legend(counts)}</div>`;
-    }).join("")}</div>
-
-    <h2>What to do, in order</h2>
-    <div class="card">
-      ${steps.map((s, i) => `<div class="step"><div class="step-n" aria-hidden="true">${i + 1}</div><div>
-        <h3>${h(s.title)}</h3><p style="margin-bottom:.3rem">${h(s.body)}</p>
-        ${s.link ? `<p class="small" style="margin-bottom:.3rem"><a href="${s.link.href}">${h(s.link.text)}</a></p>` : ""}
-        ${cite(s.facts)}</div></div>`).join("")}
-    </div>
-
-    <h2>What this cannot tell you</h2>
-    <div class="prose">
-      <ul class="plain">
-        <li>Which connectors your makers use, or which they combine. Splitting two connectors into different groups stops any app or flow that uses both. ${cite(["groups"])}</li>
-        <li>Which system a connection points at. Data policies cannot see this either. ${cite(["no-connection-control"])}</li>
-        <li>Which users may use a connector. Policies apply to environments and tenants, not users. ${cite(["no-user-scope"])}</li>
-        <li>How likely an incident is. That needs your own usage and incident data.</li>
-      </ul>
-    </div>
-
-    <h2>Connector lists</h2>
-    <div class="filters no-print" style="max-width:320px">${zoneSelect("strategy-zone")}</div>
-    <div id="zone-lists"></div>
-
-    <h2 class="no-print">Download drafts</h2>
-    <div class="no-print">
-      <div class="callout"><strong>These are drafts for administrator review.</strong> Connector IDs are derived from Learn page addresses, and action lists depend on name-based classes. Check both before applying anything. This site never calls Microsoft APIs.</div>
-      <div class="actions">
-        <button class="btn" type="button" id="dl-csv">Treatment for all zones (CSV)</button>
-        <button class="btn" type="button" id="dl-actions">Action rules for this zone (JSON)</button>
-        ${acpAvailable ? '<button class="btn" type="button" id="dl-acp">ACP allowlist for this zone (JSON)</button>' : ""}
-      </div>
-      <p class="small" style="margin-top:.5rem">${cite(["action-control", "acp-shape"])}</p>
-      <p class="small muted" id="dl-status" role="status"></p>
-    </div>`;
-
-  const listRoot = main.querySelector("#zone-lists");
-  const drawLists = () => {
-    const lists = data[store.zone];
-    const section = (key, title, intro) => {
-      const rows = lists[key];
-      if (!rows.length) return "";
-      const sorted = [...rows].sort((a, b) => b.r.redLines - a.r.redLines || a.c.n.localeCompare(b.c.n));
-      return `<details class="op-class"><summary><span>${pill(key)} ${h(title)}</span><span class="muted">${fmt(rows.length)}</span></summary>
-        <div style="padding:0 .9rem .8rem"><p class="small muted">${h(intro)}</p>
-        <ul class="plain" style="columns:2 280px">${sorted.slice(0, 200).map(({ c, r }) => `<li><a href="#/c/${encodeURIComponent(c.s)}">${h(c.n)}</a>${r.group && key !== "block" ? ` <span class="muted small">(${h(r.group)})</span>` : ""}</li>`).join("")}</ul>
-        ${rows.length > 200 ? `<p class="small muted">Showing the first 200 of ${fmt(rows.length)}. Download the CSV for all of them.</p>` : ""}</div></details>`;
-    };
-    listRoot.innerHTML = section("retain", "No control can enforce your limit", "These need a risk owner's decision, or a change of policy model.")
-      + section("block", "Blocked", "Sorted by how many of your limits each one crosses.")
-      + section("modify", "Allowed with controls", "Open a connector to see its specific controls.")
-      + section("allow", "Allowed", "Your settings place no condition on these.")
-      + section("outside", "Outside data policies", "Data policies do not govern these. Logic Apps connectors need Azure Policy.");
-  };
-  main.querySelector("#strategy-zone").addEventListener("change", (e) => { store.zone = e.target.value; drawLists(); });
-  main.querySelector("#print-strategy").addEventListener("click", () => window.print());
-  const status = main.querySelector("#dl-status");
-  main.querySelector("#dl-csv").addEventListener("click", () => {
-    const all = ZONES.map((z) => resultsFor(z.id));
-    download("connector-treatments.csv", csv([
-      ["Connector", "Connector ID (derived)", "Publisher", ...ZONES.flatMap((z) => [`${z.label}: treatment`, `${z.label}: group`, `${z.label}: limits crossed`])],
-      ...store.index.map((c, i) => [c.n, c.api, c.p, ...all.flatMap((results) => [TREATMENTS[results[i].treatment].label, results[i].group ?? "", results[i].redLines])]),
-    ]), "text/csv");
-    status.textContent = "Download started.";
-  });
-  main.querySelector("#dl-actions").addEventListener("click", async (event) => {
-    event.target.disabled = true;
-    status.textContent = "Fetching operation lists.";
-    const results = resultsFor(store.zone);
-    const targets = results.filter((r) => r.deniedClasses.length && r.treatment !== "block").map((r) => r.slug);
-    const details = await connectorDetails(targets);
-    const out = actionRulesDraft(results, details);
-    download(`action-rules-${store.zone}-DRAFT.json`, JSON.stringify({ note: "Draft for administrator review.", ...out }, null, 2));
-    status.textContent = `Draft covers ${plural(out.connectorActionConfigurations.length, "connector")}.`;
-    event.target.disabled = false;
-  });
-  main.querySelector("#dl-acp")?.addEventListener("click", async (event) => {
-    event.target.disabled = true;
-    status.textContent = "Fetching operation lists.";
-    const results = resultsFor(store.zone);
-    const targets = results.filter((r) => r.deniedClasses.length && r.treatment !== "block").map((r) => r.slug);
-    const details = await connectorDetails(targets);
-    const { draft, notCovered } = acpDraft(store.index, results, zoneById(store.zone).label, details);
-    download(`acp-allowlist-${store.zone}-DRAFT.json`, JSON.stringify(draft, null, 2));
-    status.textContent = `Draft allows ${plural(draft.ruleSets[0].inputs.AllowedConnectorList.length, "connector")}. Not covered by ACP, so govern separately: ${notCovered.join(", ")}.`;
-    event.target.disabled = false;
-  });
-  drawLists();
-  return "Strategy";
 }
 
 /* ---------- Changes ---------- */

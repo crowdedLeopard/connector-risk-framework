@@ -55,6 +55,38 @@ const ICONS = {
 
 export const icon = (name, size = 14) => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 
+// Official Microsoft product icons. Microsoft's terms require the full product name beside
+// each icon, unaltered, and only ever representing that product. Azure Logic Apps is not in
+// the Power Platform set, so it appears as its name alone.
+const IMG = "img/microsoft/";
+const PRODUCTS = {
+  "Power Platform": { name: "Microsoft Power Platform", file: "PowerPlatform_scalable.svg" },
+  "Power Apps": { name: "Power Apps", file: "PowerApps_scalable.svg" },
+  "Power Automate": { name: "Power Automate", file: "PowerAutomate_scalable.svg" },
+  "Copilot Studio": { name: "Microsoft Copilot Studio", file: "CopilotStudio_scalable.svg" },
+  Dataverse: { name: "Microsoft Dataverse", file: "Dataverse_scalable.svg" },
+  "Logic Apps": { name: "Azure Logic Apps", file: "" },
+};
+
+export const productIcon = (key) => (PRODUCTS[key]?.file ? `<img src="${IMG}${PRODUCTS[key].file}" alt="" width="96" height="96">` : "");
+export const productName = (key) => PRODUCTS[key]?.name ?? key;
+export const product = (key) => `<span class="product">${productIcon(key)}${h(productName(key))}</span>`;
+
+// Connectors that are themselves these Microsoft products, so their name sits beside the icon.
+const CONNECTOR_PRODUCT = {
+  microsoftcopilotstudio: "Copilot Studio", commondataservice: "Dataverse", commondataserviceforapps: "Dataverse",
+  powerappsforadmins: "Power Apps", powerappsforappmakers: "Power Apps", powerappsnotification: "Power Apps", powerappsnotificationv2: "Power Apps",
+  microsoftflowforadmins: "Power Automate", flowmanagement: "Power Automate",
+  powerplatformforadmins: "Power Platform", powerplatformadminv2: "Power Platform",
+};
+
+export function tile(slug, name, small = false) {
+  const key = CONNECTOR_PRODUCT[slug];
+  if (key) return `<span class="tile icon-tile ${small ? "small" : ""}" aria-hidden="true">${productIcon(key)}</span>`;
+  const letter = (String(name).match(/[\p{L}\p{N}]/u)?.[0] ?? "?").toUpperCase();
+  return `<span class="tile ${small ? "small" : ""}" aria-hidden="true">${h(letter)}</span>`;
+}
+
 export const pill = (treatment) => `<span class="pill ${treatment}">${icon(treatment)}${h(TREATMENTS[treatment].label)}</span>`;
 
 export function cite(factIds = []) {

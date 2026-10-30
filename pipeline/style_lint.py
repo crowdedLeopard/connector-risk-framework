@@ -11,7 +11,7 @@ DASHES = re.compile("[–—]")
 # "center" stays allowed only inside the product name "admin center".
 AMERICAN = re.compile(r"\b(organi[z]ation\w*|prioriti[z]e\w*|analy[z]e[sd]?|behavior\w*|color\w*|favor\w*|licens[e]? class|catalog\b|customi[z]e\w*|recogni[z]e\w*|summari[z]e\w*)\b", re.I)
 # CSS and JavaScript identifiers such as "color" are not reader-facing, so only their strings are checked.
-CODE_SUFFIXES = {".css"}
+CODE_SUFFIXES = {".css", ".svg"}
 
 
 def files():

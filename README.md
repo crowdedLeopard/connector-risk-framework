@@ -55,6 +55,10 @@ node --test tests/engine.test.mjs
 
 `.github/workflows/refresh.yml` runs every Monday and can be started by hand. It crawls, checks, commits the data and deploys to GitHub Pages in the same run, because a push made with `GITHUB_TOKEN` does not start other workflows. It opens an issue for new connectors, changed sources and failures. If the connector count falls by more than 5%, or more than 2% of pages cannot be parsed, it stops and the last good data stays live.
 
+## Microsoft product icons
+
+`site/img/microsoft/` holds unaltered icons from Microsoft's [Power Platform icons](https://learn.microsoft.com/en-us/power-platform/guidance/icons) download. They remain Microsoft's, are not covered by this repository's content, and are used under Microsoft's published terms: only to identify the product each was designed for, with its name beside it. None represents this tool. Azure Logic Apps is not in that set, so it appears as its name alone.
+
 ## Disclaimer
 
 This site gives indicative assessments and suggested approaches for Power Platform connectors, derived from public Microsoft documentation. It is not an official Microsoft assessment and does not replace an organisation's own risk assessment. Check each connector's Microsoft Learn page and test any policy change outside production before applying it.
