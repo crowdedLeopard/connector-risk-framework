@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync } from "node:fs";
-import { acpDraft, actionRulesDraft, defaultSettings, EXPOSURES, evaluate, evaluateAll, PRESETS, summarise, ZONES } from "../site/js/engine.js";
+import { acpDraft, actionRulesDraft, clearChanges, countChanges, defaultSettings, EXPOSURES, evaluate, evaluateAll, migrateProfile, neverAllowState, PRESETS, profileLabel, setLevel, setLimit, setNeverAllow, summarise, ZONES } from "../site/js/engine.js";
 
 const index = JSON.parse(readFileSync(new URL("../data/current/index.json", import.meta.url)));
 const facts = JSON.parse(readFileSync(new URL("../data/current/facts.json", import.meta.url)));
@@ -25,6 +25,62 @@ test("every preset sets a tolerance for every exposure in every zone", () => {
       for (const e of EXPOSURES) assert.ok(["allow", "controls", "deny"].includes(preset.zones[z.id][e.id]), `${z.id} ${e.id}`);
     }
   }
+});
+
+test("a level applies its own preset, in one zone or in all of them", () => {
+  const s = setLevel(defaultSettings(), "tighter");
+  assert.deepEqual(s.zones, PRESETS.tighter.zones);
+  setLevel(s, "open", "team");
+  assert.deepEqual(s.zones.team, PRESETS.open.zones.team);
+  assert.deepEqual(s.zones.shared, PRESETS.tighter.zones.shared);
+  assert.equal(profileLabel(s), "Different levels by environment");
+});
+
+test("never allow blocks a trait everywhere, survives a level change, and can be undone", () => {
+  const s = setNeverAllow(defaultSettings(), "mcp", true);
+  assert.ok(ZONES.every((z) => s.zones[z.id].mcp === "deny"));
+  setLevel(s, "open");
+  assert.ok(neverAllowState(s, "mcp").on);
+  assert.ok(ZONES.every((z) => s.zones[z.id].mcp === "deny"));
+  setNeverAllow(s, "mcp", false);
+  assert.ok(ZONES.every((z) => s.zones[z.id].mcp === PRESETS.open.zones[z.id].mcp));
+  assert.equal(countChanges(s), 0);
+});
+
+test("never allow reports a trait the level already rules out everywhere", () => {
+  const s = setLevel(defaultSettings(), "tighter");
+  assert.deepEqual(neverAllowState(s, "consumer"), { on: true, fromLevel: true });
+  assert.deepEqual(neverAllowState(s, "mcp"), { on: false, fromLevel: false });
+});
+
+test("a limit changed by hand is counted, kept across levels, and cleared on request", () => {
+  const s = setLimit(defaultSettings(), "production", "delete", "deny");
+  assert.equal(countChanges(s), 1);
+  assert.equal(profileLabel(s), "Microsoft's starting point, with your changes");
+  setLevel(s, "open");
+  assert.equal(s.zones.production.delete, "deny");
+  setLimit(s, "production", "delete", PRESETS.open.zones.production.delete);
+  assert.equal(countChanges(s), 0);
+  setLimit(s, "team", "write", "deny");
+  clearChanges(s);
+  assert.deepEqual(s.zones, PRESETS.open.zones);
+});
+
+test("settings saved before levels existed keep every limit", () => {
+  const fromPreset = migrateProfile({ version: 1, preset: "tighter", zones: structuredClone(PRESETS.tighter.zones) });
+  assert.deepEqual(fromPreset.levels, { shared: "tighter", team: "tighter", production: "tighter" });
+  assert.equal(countChanges(fromPreset), 0);
+  const zones = structuredClone(PRESETS.microsoft.zones);
+  zones.team.raw = "deny";
+  const customised = migrateProfile({ version: 1, preset: null, zones });
+  assert.equal(customised.zones.team.raw, "deny");
+  assert.equal(customised.levels.team, "microsoft");
+  assert.equal(countChanges(customised), 1);
+});
+
+test("a level name that is not a preset falls back safely", () => {
+  const s = migrateProfile({ version: 1, preset: "constructor", levels: { shared: "__proto__", team: "toString" }, zones: structuredClone(PRESETS.microsoft.zones) });
+  assert.deepEqual(s.levels, { shared: "microsoft", team: "microsoft", production: "microsoft" });
 });
 
 test("Microsoft's list of nonblockable connectors is never placed in Blocked by classic policies", () => {

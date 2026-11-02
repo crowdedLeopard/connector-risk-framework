@@ -1,5 +1,5 @@
 // Page views. Every number on the site is computed from the data at render time.
-import { EXPOSURES, EXPOSURE_BY_ID, PRESETS, TOLERANCE_LABELS, TREATMENTS, ZONES, evaluate, summarise } from "./engine.js";
+import { EXPOSURES, EXPOSURE_BY_ID, TOLERANCE_LABELS, TREATMENTS, ZONES, evaluate, profileLabel, summarise } from "./engine.js";
 import { announce, bar, cite, connectorDetail, csv, download, fmt, h, pill, plural, product, productIcon, productName, resultsFor, saveSettings, store, tile } from "./ui.js";
 
 const safeUrl = (url) => (/^https?:\/\//i.test(url ?? "") ? url : "");
@@ -29,7 +29,6 @@ const GALLERY = ["commondataserviceforapps", "microsoftcopilotstudio", "powerapp
 export function renderHome(main) {
   const { counts, dataDate } = store.meta;
   const verified = store.facts.facts.filter((f) => f.status === "verified").length;
-  const preset = store.settings.preset ? PRESETS[store.settings.preset].label : "Customised limits";
   main.innerHTML = `
     <section class="hero-band on-dark">
       <div class="wrap-inner hero-grid">
@@ -37,7 +36,7 @@ export function renderHome(main) {
           <h1>Decide what every connector <span class="gradient-text">may do in your organisation.</span></h1>
           <p class="lede">See what each connector can call and where it reaches. Set what you will accept. Get a strategy that uses only controls Microsoft documents, with their limits stated.</p>
           <div class="actions">
-            <a class="btn primary" href="#/build/platform">Build my strategy</a>
+            <a class="btn primary" href="#/build">Set my risk profile</a>
             <a class="btn ghost" href="#/connectors">Browse ${fmt(counts.catalogue)} connectors</a>
           </div>
           <p class="hero-note">An independent tool built from public Microsoft documentation. Not an official Microsoft assessment.</p>
@@ -49,7 +48,7 @@ export function renderHome(main) {
           <div class="flow-arrow" aria-hidden="true">${arrowDown}</div>
           <div class="glass"><p class="flow-title">Use connectors</p><p class="flow-big">${fmt(counts.catalogue)} connectors, ${fmt(counts.operations)} operations</p></div>
           <div class="flow-arrow" aria-hidden="true">${arrowDown}</div>
-          <div class="glass"><p class="flow-title">Your limits decide, by environment: ${h(preset)}</p>
+          <div class="glass"><p class="flow-title">Your risk profile decides, by environment: ${h(profileLabel(store.settings))}</p>
             ${ZONES.map((z) => `<div class="flow-zone"><span>${h(z.label)}</span>${bar(summarise(resultsFor(z.id)))}</div>`).join("")}
             ${legendAll()}
           </div>
@@ -65,9 +64,9 @@ export function renderHome(main) {
 
     <h2>Three questions to a strategy</h2>
     <div class="journey">
-      <a class="card journey-card" href="#/build/platform"><span class="layer-tag fact">Step 1</span><h3>Your platform</h3><p class="small" style="margin:0">Which products you govern and which controls you have. This decides what can be enforced.</p></a>
-      <a class="card journey-card" href="#/build/appetite"><span class="layer-tag yours">Step 2</span><h3>Your risk appetite</h3><p class="small" style="margin:0">Compare three starting points by what each one does to the catalogue, then pick the closest.</p></a>
-      <a class="card journey-card" href="#/build/limits"><span class="layer-tag derived">Step 3</span><h3>Your limits</h3><p class="small" style="margin:0">Fine-tune every trait for shared, team and production environments, and watch the result change.</p></a>
+      <a class="card journey-card" href="#/build"><span class="layer-tag yours">Question 1</span><h3>How cautious?</h3><p class="small" style="margin:0">Compare three levels by what each one does to the catalogue, then pick the closest.</p></a>
+      <a class="card journey-card" href="#/build"><span class="layer-tag derived">Question 2</span><h3>What will you never allow?</h3><p class="small" style="margin:0">Optional. Tick anything you want ruled out in every environment.</p></a>
+      <a class="card journey-card" href="#/build"><span class="layer-tag fact">Question 3</span><h3>What is in place?</h3><p class="small" style="margin:0">Which products you govern and which controls you have. This decides what can be enforced.</p></a>
       <a class="card journey-card" href="#/strategy"><span class="layer-tag result">Result</span><h3>Your strategy</h3><p class="small" style="margin:0">Ordered steps with sources, connector lists, and drafts for an administrator to review.</p></a>
     </div>
 
@@ -132,7 +131,7 @@ export function renderCatalogue(main) {
   const option = (value, label, current) => `<option value="${h(value)}" ${current === value ? "selected" : ""}>${h(label)}</option>`;
   main.innerHTML = `
     <h1>Connectors</h1>
-    <p class="lede">Every connector on Microsoft Learn, plus built-in items that appear in data policies. The treatment shown reflects <a href="#/build/limits">your settings</a>.</p>
+    <p class="lede">Every connector on Microsoft Learn, plus built-in items that appear in data policies. The treatment shown reflects <a href="#/build">your risk profile</a>.</p>
     <div class="filter-panel no-print">
     <div class="product-filter" role="group" aria-label="Filter by product">
       <button type="button" data-product="" aria-pressed="${!s.product}">All products</button>
@@ -269,7 +268,7 @@ export async function renderConnector(main, slug) {
           ${r.redLines ? `<p class="small" style="margin:0">Limits of yours it crosses: ${r.redLines}.</p>` : ""}
           ${r.why.length || r.steps.length ? `<ul>${why(r.why)}${why(r.steps)}</ul>` : '<p class="small muted" style="margin:0">Nothing you have set applies here.</p>'}
         </div>`).join("")}</div>
-      <p class="small muted" style="margin-top:.7rem">Based on <a href="#/build/limits">your settings</a>. Change them and these results update.</p>
+      <p class="small muted" style="margin-top:.7rem">Based on <a href="#/build">your risk profile</a>. Change it and these results update.</p>
 
       <fieldset class="card no-print" style="margin-top:1rem">
         <legend class="group-title" style="float:left;margin:0 0 .5rem">Your decision for this connector</legend>

@@ -8,9 +8,9 @@ const routes = {
   "": { view: renderHome, title: "Connector Risk Framework" },
   connectors: { view: renderCatalogue, title: "Connectors", nav: "connectors" },
   c: { view: renderConnector, title: "Connector", nav: "connectors" },
-  build: { view: renderBuild, title: "Build a strategy", nav: "build" },
+  build: { view: renderBuild, title: "Risk profile", nav: "build" },
   // Kept so links to the earlier address still work.
-  criteria: { view: (main) => renderBuild(main, "limits"), title: "Build a strategy", nav: "build" },
+  criteria: { view: (main) => renderBuild(main, "limits"), title: "Risk profile", nav: "build" },
   strategy: { view: renderStrategy, title: "Strategy", nav: "build" },
   changes: { view: renderChanges, title: "Changes", nav: "changes" },
   method: { view: renderMethod, title: "Method", nav: "method" },

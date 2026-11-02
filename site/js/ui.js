@@ -1,5 +1,5 @@
 // Shared state and rendering helpers.
-import { TREATMENTS, defaultSettings, evaluateAll } from "./engine.js";
+import { TREATMENTS, defaultSettings, evaluateAll, migrateProfile } from "./engine.js";
 
 const STORAGE_KEY = "crf.settings.v1";
 
@@ -13,7 +13,7 @@ export const plural = (n, word) => `${fmt(n)} ${word}${n === 1 ? "" : "s"}`;
 export function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved?.version === 1 && saved.zones?.shared) return saved;
+    if (saved?.version === 1 && saved.zones?.shared) return migrateProfile(saved);
   } catch { /* storage can be unavailable; defaults still work */ }
   return defaultSettings();
 }

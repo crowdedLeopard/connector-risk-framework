@@ -112,12 +112,81 @@ export const PRESETS = {
 export function defaultSettings() {
   return {
     version: 1,
-    preset: "microsoft",
+    levels: Object.fromEntries(ZONES.map((z) => [z.id, "microsoft"])),
+    adjust: Object.fromEntries(ZONES.map((z) => [z.id, {}])),
     zones: structuredClone(PRESETS.microsoft.zones),
     context: { policyModel: "classic", managed: false, logicApps: false, copilot: true },
     sensitiveCategories: [],
     overrides: {},
   };
+}
+
+// A risk profile is one preset level per zone, plus any limits the organisation has changed itself.
+// `zones` is always worked out from those two, so changing a level keeps the organisation's own changes.
+const levelLimit = (settings, zoneId, exposureId) => PRESETS[settings.levels[zoneId]].zones[zoneId][exposureId];
+
+function applyProfile(settings) {
+  settings.zones = Object.fromEntries(ZONES.map((z) => [z.id, { ...PRESETS[settings.levels[z.id]].zones[z.id], ...settings.adjust[z.id] }]));
+  return settings;
+}
+
+export function setLevel(settings, preset, zoneId = null) {
+  for (const z of ZONES) if (!zoneId || z.id === zoneId) settings.levels[z.id] = preset;
+  return applyProfile(settings);
+}
+
+export function setLimit(settings, zoneId, exposureId, value) {
+  if (levelLimit(settings, zoneId, exposureId) === value) delete settings.adjust[zoneId][exposureId];
+  else settings.adjust[zoneId][exposureId] = value;
+  return applyProfile(settings);
+}
+
+export function setNeverAllow(settings, exposureId, on) {
+  for (const z of ZONES) {
+    if (on) settings.adjust[z.id][exposureId] = "deny";
+    else delete settings.adjust[z.id][exposureId];
+  }
+  return applyProfile(settings);
+}
+
+export function neverAllowState(settings, exposureId) {
+  return {
+    on: ZONES.every((z) => settings.zones[z.id][exposureId] === "deny"),
+    fromLevel: ZONES.every((z) => levelLimit(settings, z.id, exposureId) === "deny" && !(exposureId in settings.adjust[z.id])),
+  };
+}
+
+export function clearChanges(settings) {
+  settings.adjust = Object.fromEntries(ZONES.map((z) => [z.id, {}]));
+  return applyProfile(settings);
+}
+
+export function countChanges(settings) {
+  return ZONES.reduce((sum, z) => sum + EXPOSURES.filter((e) => settings.zones[z.id][e.id] !== levelLimit(settings, z.id, e.id)).length, 0);
+}
+
+export function sharedLevel(settings) {
+  const levels = new Set(ZONES.map((z) => settings.levels[z.id]));
+  return levels.size === 1 ? [...levels][0] : null;
+}
+
+export function profileLabel(settings) {
+  const level = sharedLevel(settings);
+  const base = level ? PRESETS[level].label : "Different levels by environment";
+  return countChanges(settings) ? `${base}, with your changes` : base;
+}
+
+// Settings saved before levels existed hold only the finished limits, so anything
+// that differs from the level counts as the organisation's own change.
+export function migrateProfile(settings) {
+  if (settings.adjust) return settings;
+  const fallback = Object.hasOwn(PRESETS, settings.preset ?? "") ? settings.preset : "microsoft";
+  settings.levels = Object.fromEntries(ZONES.map((z) => [z.id, Object.hasOwn(PRESETS, settings.levels?.[z.id] ?? "") ? settings.levels[z.id] : fallback]));
+  settings.adjust = Object.fromEntries(ZONES.map((z) => [z.id, Object.fromEntries(EXPOSURES
+    .filter((e) => settings.zones[z.id]?.[e.id] && settings.zones[z.id][e.id] !== levelLimit(settings, z.id, e.id))
+    .map((e) => [e.id, settings.zones[z.id][e.id]]))]));
+  delete settings.preset;
+  return applyProfile(settings);
 }
 
 // Connectors the organisation has approved no longer count these exposures, because
