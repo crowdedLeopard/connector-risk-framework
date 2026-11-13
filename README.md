@@ -86,6 +86,7 @@ python -m http.server 4173 --directory _site
 | `schema/` | JSON Schemas for every published data file |
 | `site/` | The static site, with no build step or third-party runtime dependencies |
 | `tests/` | Decision engine, freshness and end-to-end site tests |
+| `docs/` | [Architecture](docs/ARCHITECTURE.md) and [design system](docs/DESIGN.md) |
 
 ## Versions
 

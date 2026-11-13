@@ -1,4 +1,8 @@
-// The risk profile page and the strategy it produces.
+/**
+ * The risk profile page (three questions plus the advanced matrix) and the strategy it produces.
+ *
+ * @module build
+ */
 import { EXPOSURES, EXPOSURE_BY_ID, GROUPS, PRESETS, TOLERANCES, TOLERANCE_LABELS, TREATMENTS, ZONES, acpDraft, actionRulesDraft, clearChanges, countChanges, defaultSettings, evaluateAll, exposureCounts, migrateProfile, neverAllowState, profileLabel, setLevel, setLimit, setNeverAllow, sharedLevel, summarise } from "./engine.js";
 import { announce, bar, cite, connectorDetails, csv, download, fmt, h, icon, pill, plural, product, resultsFor, saveSettings, store } from "./ui.js";
 
@@ -7,6 +11,7 @@ const zoneById = (id) => ZONES.find((z) => z.id === id);
 /* ---------- Results dock ---------- */
 let lastBlocks = null;
 
+/** Blocked counts and treatment bars per zone, with the change since the last edit. */
 function dockZones() {
   return ZONES.map((z) => {
     const counts = summarise(resultsFor(z.id));
@@ -15,10 +20,12 @@ function dockZones() {
   }).join("");
 }
 
+/** Snapshot blocked counts so the next dock render can show the change. */
 function rememberBlocks() {
   lastBlocks = Object.fromEntries(ZONES.map((z) => [z.id, summarise(resultsFor(z.id)).block]));
 }
 
+/** The floating results bar at the bottom of the risk profile page. */
 function dock() {
   return `<aside class="dock no-print" aria-label="Effect of your risk profile">
     <div class="dock-zones" id="dock-zones">${dockZones()}</div>
@@ -29,6 +36,7 @@ function dock() {
 /* ---------- Question 1: how cautious ---------- */
 const LEVEL_ORDER = ["open", "microsoft", "tighter"];
 
+/** Blocked counts per zone if the reader picked this caution level, for comparison. */
 function levelPreview(id) {
   const s = store.settings;
   return ZONES.map((z) => {
@@ -37,6 +45,7 @@ function levelPreview(id) {
   }).join("");
 }
 
+/** Question 1: the caution level, with an option to set it per environment. */
 function drawCaution() {
   return `
     <fieldset class="question">
@@ -64,6 +73,7 @@ function drawCaution() {
 /* ---------- Question 2: never allow ---------- */
 const NEVER_ALLOW = ["consumer", "public-publishing", "external-ai", "any-endpoint", "raw", "admin", "stored-secret", "independent", "deprecated", "mcp"];
 
+/** Question 2: traits to rule out in every environment. */
 function drawNever() {
   const counts = exposureCounts(store.index, store.settings);
   return `
@@ -81,6 +91,7 @@ function drawNever() {
 }
 
 /* ---------- Question 3: what is in place ---------- */
+/** Question 3: policy model, Managed Environments and products in use. */
 function drawPlatform() {
   const ctx = store.settings.context;
   const inService = (name) => store.index.filter((c) => c.sv.includes(name)).length;
@@ -106,6 +117,7 @@ function drawPlatform() {
 /* ---------- Advanced: every limit by environment ---------- */
 const TOLERANCE_ICON = { allow: "allow", controls: "modify", deny: "block" };
 
+/** One three-way allow, controls or deny control in the advanced matrix. */
 function limitCell(exposure, zone) {
   return `<fieldset class="cell"><legend>${h(exposure.label)}: ${h(zone.label)}</legend>
     <span class="zone-name" aria-hidden="true">${h(zone.label)}</span>
@@ -113,6 +125,7 @@ function limitCell(exposure, zone) {
   </fieldset>`;
 }
 
+/** The advanced matrix: every trait by every zone, plus sensitive categories. */
 function drawAdvanced(open) {
   const s = store.settings;
   const counts = exposureCounts(store.index, s);
@@ -146,6 +159,10 @@ function drawAdvanced(open) {
 }
 
 /* ---------- Keeping the page in step with the settings ---------- */
+/**
+ * Bring every control on the page in line with store.settings, without re-rendering,
+ * so focus and scroll position are kept while the reader works through the questions.
+ */
 function syncProfile(main) {
   const s = store.settings;
   const level = sharedLevel(s);
@@ -168,6 +185,7 @@ function syncProfile(main) {
   main.querySelector("#dock-zones").innerHTML = dockZones();
 }
 
+/** Wire every control on the risk profile page to the settings, through one delegated listener. */
 function bindProfile(main) {
   const s = store.settings;
   main.querySelector("#build-body").addEventListener("change", ({ target }) => {
@@ -194,6 +212,11 @@ function bindProfile(main) {
 }
 
 /* ---------- Settings file ---------- */
+/**
+ * Validate an imported settings file field by field. Unknown keys and values are dropped,
+ * so a hand-edited or hostile file cannot put the page into an invalid state.
+ * @throws {Error} when the file is not a settings file from this tool
+ */
 function validSettings(input) {
   const base = defaultSettings();
   if (input?.version !== 1 || typeof input.zones !== "object") throw new Error("it is not a settings file from this tool.");
@@ -213,6 +236,7 @@ function validSettings(input) {
   return migrateProfile({ ...base, levels: input.levels, adjust: undefined, preset: input.preset });
 }
 
+/** Download, load and reset links for the settings file. */
 function settingsFile() {
   return `<div class="settings-file no-print">
     <button class="linkish" type="button" id="settings-export">Download settings</button>
@@ -223,6 +247,7 @@ function settingsFile() {
   </div>`;
 }
 
+/** Wire the settings file links. redraw() runs after a successful load or reset. */
 function bindSettingsFile(main, redraw) {
   main.querySelector("#settings-export").addEventListener("click", () => download("connector-risk-settings.json", JSON.stringify(store.settings, null, 2)));
   main.querySelector("#settings-reset").addEventListener("click", () => {
@@ -246,6 +271,10 @@ function bindSettingsFile(main, redraw) {
 }
 
 /* ---------- The risk profile page ---------- */
+/**
+ * Risk profile: three questions and the advanced matrix, with the results dock.
+ * @param {string} [step] "limits" opens the advanced matrix (kept for old #/criteria links)
+ */
 export function renderBuild(main, step) {
   const title = "Set your risk profile";
   main.innerHTML = `
@@ -262,6 +291,7 @@ export function renderBuild(main, step) {
 }
 
 /* ---------- Strategy ---------- */
+/** Connector lists for one zone's strategy, grouped by treatment. */
 function zoneLists(zone) {
   const results = resultsFor(zone.id);
   const lists = { block: [], retain: [], modify: [], allow: [], outside: [] };
@@ -277,6 +307,10 @@ const PHASES = [
   { id: "run", title: "Keep it running", why: "Every week from here on" },
 ];
 
+/**
+ * The ordered strategy steps, by phase. A step appears only when the reader's settings and
+ * the catalogue make it relevant, and each one cites the documentation behind it.
+ */
 function strategySteps() {
   const ctx = store.settings.context;
   const acp = ctx.policyModel !== "classic";
@@ -387,10 +421,15 @@ function strategySteps() {
   return { steps, data, totalRetained };
 }
 
+/** The count of connectors per treatment for one zone. */
 function zoneNumbers(counts) {
   return `<ul class="zone-numbers">${Object.keys(TREATMENTS).filter((k) => k !== "outside" || counts[k]).map((k) => `<li><b>${fmt(counts[k])}</b><span><i class="seg-${k}"></i>${h(TREATMENTS[k].label)}</span></li>`).join("")}</ul>`;
 }
 
+/**
+ * Strategy: where each zone ends up, decisions the reader still has to make, the ordered
+ * steps, connector lists and drafts for an administrator to review. Printable.
+ */
 export function renderStrategy(main) {
   const { steps, data, totalRetained } = strategySteps();
   const ctx = store.settings.context;

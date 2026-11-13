@@ -1,3 +1,13 @@
+/**
+ * Entry point. Loads the data, sets up the theme, and routes between views.
+ *
+ * Routing is hash-based (#/connectors, #/c/sharepointonline) so the site works on
+ * GitHub Pages with no server rewrites, and every view can be linked to directly.
+ * Each view is an async function (main, param) that renders into <main> and returns
+ * the page title.
+ *
+ * @module app
+ */
 import { store, h, loadSettings } from "./ui.js";
 import { renderBuild, renderStrategy } from "./build.js";
 import { renderAbout, renderData, renderFreshness, renderStatus } from "./status.js";
@@ -5,6 +15,7 @@ import { renderChanges, renderCatalogue, renderConnector, renderHome, renderMeth
 
 const main = document.getElementById("main");
 
+// Route table: the first path segment selects the view; nav names the header link to mark current.
 const routes = {
   "": { view: renderHome, title: "Connector Risk Framework" },
   connectors: { view: renderCatalogue, title: "Connectors", nav: "connectors" },
@@ -20,6 +31,7 @@ const routes = {
   about: { view: renderAbout, title: "About" },
 };
 
+/** Render the view for the current hash, set the title, and move focus to the new content. */
 async function route() {
   const [, first = "", ...rest] = location.hash.replace(/^#/, "").split("/");
   const entry = routes[first] ?? null;
@@ -42,6 +54,10 @@ async function route() {
   main.focus({ preventScroll: true });
 }
 
+/**
+ * Light or dark theme. The system setting applies until the reader presses the toggle;
+ * their choice is then kept in localStorage and set as data-theme on <html>.
+ */
 function setupTheme() {
   const root = document.documentElement;
   try {
@@ -69,6 +85,7 @@ function labelScrollRegions(root) {
   });
 }
 
+/** Load the three files every view needs, fill the store, then render the first page. */
 async function start() {
   new MutationObserver(() => labelScrollRegions(main)).observe(main, { childList: true, subtree: true });
   setupTheme();
