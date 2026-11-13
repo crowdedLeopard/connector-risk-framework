@@ -8,6 +8,12 @@ Versions are explained in `pipeline/versions.py`.
 
 No decision or schema changes.
 
+### Added
+
+- **Power Platform edition** in `powerplatform/`: Dataverse tables for connectors, operations, traits, changes, refreshes, governance facts, risk profiles and decisions, with a repeatable provisioning script and an incremental sync from the weekly data. A **Dataverse sync** workflow runs it after each refresh once configured.
+- **Code app** for Power Apps (React, TypeScript, Fluent UI) with overview, catalogue, connector, changes, criteria, decisions and method screens. It uses the site's engine unchanged, and a test checks that every connector gets the same treatment in every zone through Dataverse as on the site.
+- **Power Platform checks** workflow for the sync tests, the app's type check, lint, tests and builds.
+
 ### Changed
 
 - **New visual design.** A neutral palette with one accent, the Inter typeface (self-hosted), hairline borders in place of heavy shadows, a tighter type scale with tabular figures, quieter tables and badges, and a light hero in place of the dark gradient band. Both themes and every page pass the automated accessibility checks.

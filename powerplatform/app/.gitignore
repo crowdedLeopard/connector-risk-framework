@@ -1,0 +1,9 @@
+node_modules
+dist
+*.local
+# Written by `pa app init` and `pa app add data-source` for one environment. See docs/DEPLOY.md.
+power.config.json
+.power/
+.ms/
+src/generated/
+dist-demo
