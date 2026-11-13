@@ -4,6 +4,14 @@ Notable changes to the decision method, the published data schema and the site. 
 
 Versions are explained in `pipeline/versions.py`.
 
+## Unreleased
+
+### Added
+
+- **Power Platform edition** in `powerplatform/`: Dataverse tables for connectors, operations, traits, changes, refreshes, governance facts, risk profiles and decisions, with a repeatable provisioning script and an incremental sync from the weekly data. A **Dataverse sync** workflow runs it after each refresh once configured.
+- **Code app** for Power Apps (React, TypeScript, Fluent UI) with overview, catalogue, connector, changes, criteria, decisions and method screens. It uses the site's engine unchanged, and a test checks that every connector gets the same treatment in every zone through Dataverse as on the site.
+- **Power Platform checks** workflow for the sync tests, the app's type check, lint, tests and builds.
+
 ## Method 1.0.0, schema 1.0 (2026-11-13)
 
 First formally versioned release. No decision changes from the previous site.
