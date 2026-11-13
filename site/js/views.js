@@ -1,4 +1,9 @@
-// Page views. Every number on the site is computed from the data at render time.
+/**
+ * Page views: home, catalogue, connector detail, weekly changes and method.
+ * Every number on these pages is computed from the data at render time; nothing is hard-coded.
+ *
+ * @module views
+ */
 import { EXPOSURES, EXPOSURE_BY_ID, TOLERANCE_LABELS, TREATMENTS, ZONES, evaluate, profileLabel, summarise } from "./engine.js";
 import { announce, bar, cite, connectorDetail, csv, download, fmt, h, pill, plural, product, productIcon, productName, resultsFor, saveSettings, store, tile } from "./ui.js";
 
@@ -13,12 +18,14 @@ const CLASS_LABELS = {
 const CLASS_ORDER = ["admin", "raw", "delete", "send", "write", "read", "other"];
 const SHORT_CLASS = { read: "Reads", write: "Writes", delete: "Deletes", send: "Sends", raw: "Raw", admin: "Admin" };
 
+/** The environment-zone picker used by the catalogue and connector pages. */
 function zoneSelect(id = "zone-select") {
   return `<label class="field" for="${id}">Environment zone<select id="${id}">${ZONES.map((z) => `<option value="${z.id}" ${store.zone === z.id ? "selected" : ""}>${h(z.label)}</option>`).join("")}</select></label>`;
 }
 
 const arrowDown = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg>';
 
+/** The colour key for treatment bars, without counts. */
 function legendAll() {
   return `<ul class="legend">${Object.keys(TREATMENTS).map((k) => `<li><i class="seg-${k}"></i>${h(TREATMENTS[k].label)}</li>`).join("")}</ul>`;
 }
@@ -26,18 +33,23 @@ function legendAll() {
 /* ---------- Home ---------- */
 const GALLERY = ["commondataserviceforapps", "microsoftcopilotstudio", "powerappsforadmins", "powerappsforappmakers", "flowmanagement", "microsoftflowforadmins", "powerplatformforadmins", "powerplatformadminv2"];
 
+/**
+ * Home: what the tool does, the product flow with live counts for the current profile,
+ * headline figures, the three-question journey and a connector search.
+ */
 export function renderHome(main) {
   const { counts, dataDate } = store.meta;
   const verified = store.facts.facts.filter((f) => f.status === "verified").length;
   main.innerHTML = `
-    <section class="hero-band on-dark">
+    <section class="hero-band">
       <div class="wrap-inner hero-grid">
         <div>
+          <a class="eyebrow" href="#/status"><span class="status-dot" aria-hidden="true"></span>Updated every week · data from ${h(dataDate)}</a>
           <h1>Decide what every connector <span class="gradient-text">may do in your organisation.</span></h1>
           <p class="lede">See what each connector can call and where it reaches. Set what you will accept. Get a strategy that uses only controls Microsoft documents, with their limits stated.</p>
           <div class="actions">
             <a class="btn primary" href="#/build">Set my risk profile</a>
-            <a class="btn ghost" href="#/connectors">Browse ${fmt(counts.catalogue)} connectors</a>
+            <a class="btn" href="#/connectors">Browse ${fmt(counts.catalogue)} connectors</a>
           </div>
           <p class="hero-note">An independent tool built from public Microsoft documentation. Not an official Microsoft assessment.</p>
         </div>
@@ -95,6 +107,11 @@ export function renderHome(main) {
 /* ---------- Catalogue ---------- */
 const catalogueState = { q: "", treatment: "", publisher: "", origin: "", product: "", category: "", exposure: "", licence: "", sort: "name", shown: 50 };
 
+/**
+ * Apply catalogueState's search and filters to the index and sort the matches.
+ * @param {object[]} results engine results for the current zone, in index order
+ * @returns {{c: object, r: object}[]} matching rows, each with its connector and result
+ */
 function filterCatalogue(results) {
   const s = catalogueState;
   const q = s.q.trim().toLowerCase();
@@ -126,6 +143,10 @@ const PUBLISHER_LABELS = { microsoft: "Microsoft", independent: "Independent pub
 
 const PRODUCT_FILTERS = ["Power Apps", "Power Automate", "Copilot Studio", "Logic Apps"];
 
+/**
+ * Connectors: the filterable, sortable catalogue with CSV export of the current view.
+ * Filter state lives in catalogueState so it survives navigating away and back.
+ */
 export function renderCatalogue(main) {
   const s = catalogueState;
   const option = (value, label, current) => `<option value="${h(value)}" ${current === value ? "selected" : ""}>${h(label)}</option>`;
@@ -201,6 +222,7 @@ export function renderCatalogue(main) {
 }
 
 /* ---------- Connector page ---------- */
+/** One plain-English sentence describing a connector, built only from its record. */
 function summarySentence(d) {
   if (d.summary) return d.summary;
   const service = d.origin === "maker-defined" ? "Connects to a destination the maker supplies" : d.serviceDomain ? `Website listed on Learn: ${d.serviceDomain}` : "Learn lists no website for this service";
@@ -211,10 +233,12 @@ function summarySentence(d) {
   return `${service}${cats}. Offers ${plural(d.liveActions, "current action")} and ${plural(liveTriggers, "current trigger")}.${can}`;
 }
 
+/** A list of reasons, each with its source citation. */
 function why(items) {
   return items.map((w) => `<li>${h(w.text)} ${cite(w.facts)}</li>`).join("");
 }
 
+/** A connector's actions and triggers grouped by class, most consequential class first. */
 function operationsSection(d) {
   const all = [...d.actions, ...d.triggers];
   if (!all.length) return '<p>Microsoft Learn lists no operations on this page.</p>';
@@ -235,6 +259,11 @@ function operationsSection(d) {
     </details>`).join("")}`;
 }
 
+/**
+ * Connector detail: the result in each zone, the reader's per-connector decision, what it
+ * can do, where it reaches, how it authenticates, its traits and the controls available.
+ * @param {string} slug from the address, for example #/c/sharepointonline
+ */
 export async function renderConnector(main, slug) {
   const c = store.bySlug.get(slug);
   if (!c) {
@@ -334,6 +363,7 @@ export async function renderConnector(main, slug) {
 }
 
 /* ---------- Changes ---------- */
+/** Weekly changes: the last twelve change sets written by the refresh. */
 export async function renderChanges(main) {
   const files = await fetch("data/changes/index.json").then((r) => (r.ok ? r.json() : [])).catch(() => []);
   const sets = await Promise.all(files.slice(0, 12).map((f) => fetch(`data/changes/${f}.json`).then((r) => r.json())));
@@ -354,6 +384,7 @@ export async function renderChanges(main) {
   return "Changes";
 }
 
+/** Summarise one connector's change record in a sentence. */
 function describeChange(c) {
   const parts = [];
   if (c.operationsAdded) parts.push(`Operations added: ${c.operationsAdded.join(", ")}`);
@@ -366,6 +397,10 @@ function describeChange(c) {
 }
 
 /* ---------- Method ---------- */
+/**
+ * Method: the logic, why there is no score, measured coverage and classifier accuracy,
+ * where judgement is used, and every fact with its source and check status.
+ */
 export function renderMethod(main) {
   const { counts, classifier: k, parseFailures } = store.meta;
   const byClass = Object.entries(k.byClass);
