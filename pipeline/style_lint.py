@@ -6,18 +6,22 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGETS = [ROOT / "site", ROOT / "data" / "facts.yaml", ROOT / "config" / "curated.yaml"] + [ROOT / name for name in ("README.md", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "LICENSE-DATA.md")]
+TARGETS = [ROOT / "site", ROOT / "data" / "facts.yaml", ROOT / "config" / "curated.yaml"] + [ROOT / name for name in ("README.md", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "LICENSE-DATA.md")] + [ROOT / "docs"]
 DASHES = re.compile("[–—]")
 # "center" stays allowed only inside the product name "admin center".
 AMERICAN = re.compile(r"\b(organi[z]ation\w*|prioriti[z]e\w*|analy[z]e[sd]?|behavior\w*|color\w*|favor\w*|licens[e]? class|catalog\b|customi[z]e\w*|recogni[z]e\w*|summari[z]e\w*)\b", re.I)
 # CSS and JavaScript identifiers such as "color" are not reader-facing, so only their strings are checked.
 CODE_SUFFIXES = {".css", ".svg"}
+# Binary files, and third-party files whose text is not ours to restyle (the font and its licence).
+SKIP_SUFFIXES = {".woff2", ".png", ".jpg", ".ico"}
+SKIP_DIRS = {ROOT / "site" / "fonts"}
 
 
 def files():
     for target in TARGETS:
         if target.is_dir():
-            yield from (p for p in target.rglob("*") if p.is_file())
+            yield from (p for p in target.rglob("*")
+                        if p.is_file() and p.suffix not in SKIP_SUFFIXES and not any(d in p.parents for d in SKIP_DIRS))
         elif target.exists():
             yield target
 

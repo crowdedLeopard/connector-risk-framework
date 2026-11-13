@@ -4,6 +4,20 @@ Notable changes to the decision method, the published data schema and the site. 
 
 Versions are explained in `pipeline/versions.py`.
 
+## Unreleased
+
+No decision or schema changes.
+
+### Changed
+
+- **New visual design.** A neutral palette with one accent, the Inter typeface (self-hosted), hairline borders in place of heavy shadows, a tighter type scale with tabular figures, quieter tables and badges, and a light hero in place of the dark gradient band. Both themes and every page pass the automated accessibility checks.
+- Front-end modules and functions are documented with JSDoc, and `docs/` now explains the architecture and the design system.
+
+### Fixed
+
+- Scrolling tables are now keyboard-focusable, labelled regions.
+- Browser-test jobs run on Ubuntu 24.04, which Playwright supports.
+
 ## Method 1.0.0, schema 1.0 (2026-11-13)
 
 First formally versioned release. No decision changes from the previous site.

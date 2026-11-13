@@ -1,3 +1,13 @@
+/**
+ * Entry point. Loads the data, sets up the theme, and routes between views.
+ *
+ * Routing is hash-based (#/connectors, #/c/sharepointonline) so the site works on
+ * GitHub Pages with no server rewrites, and every view can be linked to directly.
+ * Each view is an async function (main, param) that renders into <main> and returns
+ * the page title.
+ *
+ * @module app
+ */
 import { store, h, loadSettings } from "./ui.js";
 import { renderBuild, renderStrategy } from "./build.js";
 import { renderAbout, renderData, renderFreshness, renderStatus } from "./status.js";
@@ -5,6 +15,7 @@ import { renderChanges, renderCatalogue, renderConnector, renderHome, renderMeth
 
 const main = document.getElementById("main");
 
+// Route table: the first path segment selects the view; nav names the header link to mark current.
 const routes = {
   "": { view: renderHome, title: "Connector Risk Framework" },
   connectors: { view: renderCatalogue, title: "Connectors", nav: "connectors" },
@@ -20,6 +31,7 @@ const routes = {
   about: { view: renderAbout, title: "About" },
 };
 
+/** Render the view for the current hash, set the title, and move focus to the new content. */
 async function route() {
   const [, first = "", ...rest] = location.hash.replace(/^#/, "").split("/");
   const entry = routes[first] ?? null;
@@ -42,6 +54,10 @@ async function route() {
   main.focus({ preventScroll: true });
 }
 
+/**
+ * Light or dark theme. The system setting applies until the reader presses the toggle;
+ * their choice is then kept in localStorage and set as data-theme on <html>.
+ */
 function setupTheme() {
   const root = document.documentElement;
   try {
@@ -55,7 +71,23 @@ function setupTheme() {
   });
 }
 
+// Wide tables scroll sideways inside a .table-scroll wrapper. A scrolling region must be
+// reachable by keyboard (WCAG 2.1.1), so each one becomes a focusable, labelled region,
+// named after the nearest heading above it. Views re-render often, so an observer applies
+// this to every wrapper as it appears rather than each view doing it.
+function labelScrollRegions(root) {
+  root.querySelectorAll(".table-scroll:not([tabindex])").forEach((region) => {
+    let heading = region.previousElementSibling;
+    while (heading && !/^H[1-4]$/.test(heading.tagName)) heading = heading.previousElementSibling;
+    region.tabIndex = 0;
+    region.setAttribute("role", "region");
+    region.setAttribute("aria-label", heading ? `Table: ${heading.textContent.trim()}` : "Table");
+  });
+}
+
+/** Load the three files every view needs, fill the store, then render the first page. */
 async function start() {
+  new MutationObserver(() => labelScrollRegions(main)).observe(main, { childList: true, subtree: true });
   setupTheme();
   const load = (name) => fetch(`data/current/${name}.json`).then((r) => {
     if (!r.ok) throw new Error(`Could not load ${name}`);
