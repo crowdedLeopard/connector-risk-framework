@@ -1,0 +1,22 @@
+name: Data correction
+description: A connector, trait or fact on the site is wrong or out of date.
+labels: [data-correction]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Connector or fact
+      description: The connector name or page address on the site, or the fact's statement.
+    validations: { required: true }
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong
+      description: What the site says, and what it should say.
+    validations: { required: true }
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A link to Microsoft documentation that shows the correct position.
+    validations: { required: true }

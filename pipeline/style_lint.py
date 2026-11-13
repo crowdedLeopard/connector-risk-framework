@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGETS = [ROOT / "site", ROOT / "data" / "facts.yaml", ROOT / "config" / "curated.yaml", ROOT / "README.md"]
+TARGETS = [ROOT / "site", ROOT / "data" / "facts.yaml", ROOT / "config" / "curated.yaml"] + [ROOT / name for name in ("README.md", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "LICENSE-DATA.md")]
 DASHES = re.compile("[–—]")
 # "center" stays allowed only inside the product name "admin center".
 AMERICAN = re.compile(r"\b(organi[z]ation\w*|prioriti[z]e\w*|analy[z]e[sd]?|behavior\w*|color\w*|favor\w*|licens[e]? class|catalog\b|customi[z]e\w*|recogni[z]e\w*|summari[z]e\w*)\b", re.I)

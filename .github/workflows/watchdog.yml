@@ -1,0 +1,94 @@
+name: Freshness watchdog
+
+# Proves the site is still updating itself. Every day it reads the data date from
+# the live site, not from the repository, so it catches a refresh that stopped,
+# failed, or committed data that never deployed. When the data is overdue it opens
+# an issue, starts a new refresh and fails, so GitHub notifies the repository owner.
+
+on:
+  schedule:
+    - cron: "43 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+      issues: write
+      contents: read
+    env:
+      # Keep in step with LATE_AFTER_DAYS in site/js/status.js.
+      MAX_AGE_DAYS: 8
+      # Set the SITE_URL repository variable if the site moves to a custom domain.
+      SITE_URL: ${{ vars.SITE_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Read the live data date
+        id: live
+        run: |
+          if [ -z "$SITE_URL" ]; then
+            owner=$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
+            SITE_URL="https://$owner.github.io/${GITHUB_REPOSITORY#*/}/"
+          fi
+          url="${SITE_URL%/}/data/current/meta.json"
+          echo "Checking $url"
+          if ! body=$(curl -fsSL --retry 3 --retry-delay 10 "$url"); then
+            echo "problem=The live site did not return $url." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          date=$(echo "$body" | jq -r '.dataDate // empty')
+          if [ -z "$date" ]; then
+            echo "problem=The live meta.json has no dataDate." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          age=$(( ( $(date -u +%s) - $(date -u -d "$date" +%s) ) / 86400 ))
+          echo "Live data date $date, $age days old."
+          echo "date=$date" >> "$GITHUB_OUTPUT"
+          echo "age=$age" >> "$GITHUB_OUTPUT"
+          if [ "$age" -gt "$MAX_AGE_DAYS" ]; then
+            echo "problem=The live data is from $date, $age days ago. The limit is $MAX_AGE_DAYS days." >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "### Live data date: $date ($age days old)"
+            echo "Site: $SITE_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Raise the alarm
+        if: steps.live.outputs.problem != ''
+        env:
+          PROBLEM: ${{ steps.live.outputs.problem }}
+        run: |
+          title="Data freshness alert"
+          runs="${{ github.server_url }}/${{ github.repository }}/actions/workflows/refresh.yml"
+          body=$(printf '%s\n\n%s\n\n%s\n%s\n' \
+            "$PROBLEM" \
+            "The watchdog has started a new Weekly refresh. Check its result: $runs" \
+            "If the refresh workflow has been disabled, enable it on the Actions tab. GitHub disables scheduled workflows in a public repository after 60 days without activity." \
+            "Watchdog run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}")
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "$body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"
+          fi
+          gh workflow enable refresh.yml --repo "$GITHUB_REPOSITORY" || true
+          gh workflow run refresh.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" || echo "Could not start the refresh."
+          echo "::error::$PROBLEM"
+          exit 1
+
+      - name: Close a resolved alert
+        if: steps.live.outputs.problem == ''
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"Data freshness alert\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" --repo "$GITHUB_REPOSITORY" --comment "The live data is from ${{ steps.live.outputs.date }} again, so this alert is resolved."
+          fi

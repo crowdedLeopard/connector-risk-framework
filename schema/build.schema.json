@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crowdedleopard.github.io/connector-risk-framework/schema/build.schema.json",
+  "title": "Build stamp",
+  "description": "data/current/build.json: written when the site is built, so the deployed version can be traced to a commit and a workflow run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "methodVersion",
+    "builtAt",
+    "dataDate"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "methodVersion": {
+      "type": "string"
+    },
+    "builtAt": {
+      "type": "string"
+    },
+    "dataDate": {
+      "$ref": "#/$defs/date"
+    },
+    "commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "repository": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "runUrl": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "workflow": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    }
+  }
+}

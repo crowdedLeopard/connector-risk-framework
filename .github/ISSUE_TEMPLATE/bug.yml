@@ -1,0 +1,26 @@
+name: Site problem
+description: Something on the site does not work or is hard to use.
+labels: [bug]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The page address, for example https://crowdedleopard.github.io/connector-risk-framework/#/connectors
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations: { required: true }
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+  - type: checkboxes
+    id: a11y
+    attributes:
+      label: Accessibility
+      options:
+        - label: This is an accessibility problem, for example with a screen reader, keyboard or zoom.

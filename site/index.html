@@ -2,6 +2,8 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Connector Risk Framework</title>
   <meta name="description" content="Understand every Power Platform connector, set what matters to your organisation, and get a management strategy grounded in Microsoft documentation.">
@@ -29,9 +31,19 @@
       </button>
     </div>
   </header>
+  <div id="stale-banner" class="stale-banner" role="status" hidden></div>
   <main id="main" class="wrap" tabindex="-1"><p class="loading">Loading connector data.</p></main>
   <footer class="site-footer">
     <div class="wrap">
+      <nav aria-label="Site information">
+        <ul class="footer-links">
+          <li><a href="#/status">Data status</a></li>
+          <li><a href="#/data">Data and downloads</a></li>
+          <li><a href="#/about">About, privacy and security</a></li>
+          <li><a href="https://github.com/crowdedLeopard/connector-risk-framework/blob/main/CHANGELOG.md">Changelog</a></li>
+          <li><a href="https://github.com/crowdedLeopard/connector-risk-framework">Source code</a></li>
+        </ul>
+      </nav>
       <p id="data-stamp"></p>
       <p class="disclaimer">This site gives indicative assessments and suggested approaches for Power Platform connectors, derived from public Microsoft documentation. It is not an official Microsoft assessment and does not replace an organisation's own risk assessment. Check each connector's Microsoft Learn page and test any policy change outside production before applying it.</p>
       <p>Your settings stay in this browser. The site uses no cookies, analytics or sign-in.</p>

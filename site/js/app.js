@@ -1,5 +1,6 @@
 import { store, h, loadSettings } from "./ui.js";
 import { renderBuild, renderStrategy } from "./build.js";
+import { renderAbout, renderData, renderFreshness, renderStatus } from "./status.js";
 import { renderChanges, renderCatalogue, renderConnector, renderHome, renderMethod } from "./views.js";
 
 const main = document.getElementById("main");
@@ -14,6 +15,9 @@ const routes = {
   strategy: { view: renderStrategy, title: "Strategy", nav: "build" },
   changes: { view: renderChanges, title: "Changes", nav: "changes" },
   method: { view: renderMethod, title: "Method", nav: "method" },
+  status: { view: renderStatus, title: "Data status" },
+  data: { view: renderData, title: "Data and downloads" },
+  about: { view: renderAbout, title: "About" },
 };
 
 async function route() {
@@ -61,7 +65,7 @@ async function start() {
   Object.assign(store, { index, meta, facts, settings: loadSettings() });
   store.bySlug = new Map(index.map((c) => [c.s, c]));
   store.factById = new Map(facts.facts.map((f) => [f.id, f]));
-  document.getElementById("data-stamp").textContent = `Data from Microsoft Learn, refreshed ${meta.dataDate}. Sources last checked ${facts.checked}.`;
+  renderFreshness();
   window.addEventListener("hashchange", route);
   await route();
 }

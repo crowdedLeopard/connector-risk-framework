@@ -3,9 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/engine.test.mjs"
+    "test": "node --test tests/engine.test.mjs tests/status.test.mjs",
+    "test:site": "node --test tests/site.test.cjs"
   },
   "devDependencies": {
-    "axe-core": "4.10.3"
+    "axe-core": "4.10.3",
+    "playwright": "1.56.1"
   }
 }
