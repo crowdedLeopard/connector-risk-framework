@@ -55,7 +55,22 @@ function setupTheme() {
   });
 }
 
+// Wide tables scroll sideways inside a .table-scroll wrapper. A scrolling region must be
+// reachable by keyboard (WCAG 2.1.1), so each one becomes a focusable, labelled region,
+// named after the nearest heading above it. Views re-render often, so an observer applies
+// this to every wrapper as it appears rather than each view doing it.
+function labelScrollRegions(root) {
+  root.querySelectorAll(".table-scroll:not([tabindex])").forEach((region) => {
+    let heading = region.previousElementSibling;
+    while (heading && !/^H[1-4]$/.test(heading.tagName)) heading = heading.previousElementSibling;
+    region.tabIndex = 0;
+    region.setAttribute("role", "region");
+    region.setAttribute("aria-label", heading ? `Table: ${heading.textContent.trim()}` : "Table");
+  });
+}
+
 async function start() {
+  new MutationObserver(() => labelScrollRegions(main)).observe(main, { childList: true, subtree: true });
   setupTheme();
   const load = (name) => fetch(`data/current/${name}.json`).then((r) => {
     if (!r.ok) throw new Error(`Could not load ${name}`);
