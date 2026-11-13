@@ -16,6 +16,7 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: write
       issues: write
@@ -30,7 +31,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
       - run: pip install -r requirements.txt
+      - run: npm ci
       - name: Restore page cache
         uses: actions/cache@v4
         with:
@@ -49,8 +52,14 @@ jobs:
       - name: Test the new data
         run: |
           python -m pytest pipeline/tests -q
-          node --test tests/engine.test.mjs
+          node --test tests/engine.test.mjs tests/status.test.mjs
           python -m pipeline.style_lint
+          python -m pipeline.validate_data
+      - name: Check the site renders with the new data
+        run: |
+          python -m pipeline.build_site
+          npx playwright install --with-deps chromium
+          node --test tests/site.test.cjs
       - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
@@ -81,6 +90,10 @@ jobs:
   deploy:
     needs: refresh
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write

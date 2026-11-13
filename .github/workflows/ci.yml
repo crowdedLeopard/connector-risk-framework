@@ -15,6 +15,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,16 +25,33 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
       - run: pip install -r requirements.txt
-      - run: python -m pytest pipeline/tests -q
-      - run: node --test tests/engine.test.mjs
-      - run: python -m pipeline.style_lint
+      - run: npm ci
+      - name: Unit tests
+        run: |
+          python -m pytest pipeline/tests -q
+          node --test tests/engine.test.mjs tests/status.test.mjs
+      - name: House style
+        run: python -m pipeline.style_lint
+      - name: Data matches its published schema
+        run: python -m pipeline.validate_data
+      - name: Build the site
+        run: python -m pipeline.build_site
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Pages, accessibility and links
+        run: node --test tests/site.test.cjs
 
   deploy:
     # Publishes code and guidance changes as soon as they reach main.
     if: github.event_name == 'push'
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write

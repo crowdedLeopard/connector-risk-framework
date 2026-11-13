@@ -1,0 +1,534 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crowdedleopard.github.io/connector-risk-framework/schema/connector.schema.json",
+  "title": "Connector record",
+  "description": "data/current/connectors/{slug}.json: everything known about one connector.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "actions",
+    "apiId",
+    "authTypes",
+    "categories",
+    "classCounts",
+    "controls",
+    "definition",
+    "deprecated",
+    "exposures",
+    "firstSeen",
+    "lastChanged",
+    "learnUrl",
+    "liveActions",
+    "mcp",
+    "name",
+    "origin",
+    "originEvidence",
+    "premium",
+    "preview",
+    "privacyPolicy",
+    "products",
+    "publisher",
+    "publisherType",
+    "serviceDomain",
+    "services",
+    "slug",
+    "triggers",
+    "website"
+  ],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "apiId": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "publisher": {
+      "type": "string"
+    },
+    "publisherType": {
+      "$ref": "#/$defs/publisherType"
+    },
+    "origin": {
+      "$ref": "#/$defs/origin"
+    },
+    "originEvidence": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "privacyPolicy": {
+      "type": "string"
+    },
+    "serviceDomain": {
+      "type": "string"
+    },
+    "learnUrl": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "premium": {
+      "type": "boolean"
+    },
+    "preview": {
+      "type": "boolean"
+    },
+    "deprecated": {
+      "type": "boolean"
+    },
+    "mcp": {
+      "type": "boolean"
+    },
+    "liveActions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "classCounts": {
+      "$ref": "#/$defs/classCounts"
+    },
+    "controls": {
+      "$ref": "#/$defs/controls"
+    },
+    "exposures": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "admin",
+          "any-endpoint",
+          "consumer",
+          "delete",
+          "deprecated",
+          "external-ai",
+          "independent",
+          "maker-target",
+          "mcp",
+          "microsoft-premium",
+          "preview",
+          "public-publishing",
+          "raw",
+          "send",
+          "shareable-auth",
+          "stored-secret",
+          "third-party",
+          "undocumented",
+          "write"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Trait ID to the evidence for it"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "anchor",
+          "basis",
+          "class",
+          "deprecated",
+          "kind",
+          "method",
+          "name",
+          "opId",
+          "parameters",
+          "path"
+        ],
+        "properties": {
+          "anchor": {
+            "type": "string"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "class": {
+            "enum": [
+              "read",
+              "write",
+              "delete",
+              "send",
+              "raw",
+              "admin",
+              "other"
+            ]
+          },
+          "deprecated": {
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "action",
+              "trigger"
+            ]
+          },
+          "method": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "opId": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "required",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "triggers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "anchor",
+          "basis",
+          "class",
+          "deprecated",
+          "kind",
+          "method",
+          "name",
+          "opId",
+          "parameters",
+          "path"
+        ],
+        "properties": {
+          "anchor": {
+            "type": "string"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "class": {
+            "enum": [
+              "read",
+              "write",
+              "delete",
+              "send",
+              "raw",
+              "admin",
+              "other"
+            ]
+          },
+          "deprecated": {
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "action",
+              "trigger"
+            ]
+          },
+          "method": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "opId": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "required",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "authTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "nameResolved",
+          "parameters",
+          "regions",
+          "shareable"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nameResolved": {
+            "type": "boolean"
+          },
+          "regions": {
+            "type": "string"
+          },
+          "shareable": {
+            "type": "boolean"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "class",
+          "regionsExcluded",
+          "service"
+        ],
+        "properties": {
+          "class": {
+            "type": "string"
+          },
+          "regionsExcluded": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "service": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "definition": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "basePath",
+            "folder",
+            "group",
+            "host",
+            "scopes"
+          ],
+          "properties": {
+            "basePath": {
+              "type": "string"
+            },
+            "folder": {
+              "type": "string"
+            },
+            "group": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            },
+            "scopes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "firstSeen": {
+      "type": "string",
+      "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$"
+    },
+    "lastChanged": {
+      "type": "string",
+      "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$"
+    }
+  },
+  "$defs": {
+    "controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acp",
+        "actionControl",
+        "blockable",
+        "classifiable",
+        "dataPolicy",
+        "endpointFiltering",
+        "logicApps",
+        "nonblockable",
+        "tenantIsolation"
+      ],
+      "properties": {
+        "acp": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "not-applicable",
+            "unconfirmed"
+          ]
+        },
+        "actionControl": {
+          "type": "boolean"
+        },
+        "blockable": {
+          "type": "boolean"
+        },
+        "classifiable": {
+          "type": "boolean"
+        },
+        "dataPolicy": {
+          "type": "boolean"
+        },
+        "endpointFiltering": {
+          "type": "boolean"
+        },
+        "logicApps": {
+          "type": "boolean"
+        },
+        "nonblockable": {
+          "type": "boolean"
+        },
+        "tenantIsolation": {
+          "enum": [
+            "applies",
+            "gap",
+            "not-shown"
+          ]
+        }
+      }
+    },
+    "classCounts": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "read",
+          "write",
+          "delete",
+          "send",
+          "raw",
+          "admin",
+          "other"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "origin": {
+      "enum": [
+        "microsoft",
+        "third-party",
+        "maker-defined",
+        "unstated"
+      ]
+    },
+    "publisherType": {
+      "enum": [
+        "microsoft",
+        "independent",
+        "other"
+      ]
+    }
+  }
+}

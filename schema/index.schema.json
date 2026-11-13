@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crowdedleopard.github.io/connector-risk-framework/schema/index.schema.json",
+  "title": "Connector index",
+  "description": "data/current/index.json: one compact row per connector, sorted by name. Short keys keep the file small; the Data page on the site explains each one.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "s",
+      "n",
+      "p",
+      "pt",
+      "o",
+      "c",
+      "sv",
+      "pr",
+      "pv",
+      "dp",
+      "m",
+      "ct",
+      "x",
+      "cc",
+      "la",
+      "tr",
+      "k",
+      "fs",
+      "api",
+      "cd"
+    ],
+    "properties": {
+      "s": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$",
+        "description": "Slug, stable identifier"
+      },
+      "n": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Display name"
+      },
+      "p": {
+        "type": "string",
+        "description": "Publisher"
+      },
+      "pt": {
+        "$ref": "#/$defs/publisherType"
+      },
+      "o": {
+        "$ref": "#/$defs/origin"
+      },
+      "c": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Categories on Learn"
+      },
+      "sv": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Products the connector works in"
+      },
+      "pr": {
+        "type": "boolean",
+        "description": "Premium"
+      },
+      "pv": {
+        "type": "boolean",
+        "description": "Preview"
+      },
+      "dp": {
+        "type": "boolean",
+        "description": "Deprecated"
+      },
+      "m": {
+        "type": "boolean",
+        "description": "MCP server"
+      },
+      "ct": {
+        "$ref": "#/$defs/controls"
+      },
+      "x": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "admin",
+            "any-endpoint",
+            "consumer",
+            "delete",
+            "deprecated",
+            "external-ai",
+            "independent",
+            "maker-target",
+            "mcp",
+            "microsoft-premium",
+            "preview",
+            "public-publishing",
+            "raw",
+            "send",
+            "shareable-auth",
+            "stored-secret",
+            "third-party",
+            "undocumented",
+            "write"
+          ]
+        },
+        "uniqueItems": true,
+        "description": "Derived trait IDs"
+      },
+      "cc": {
+        "$ref": "#/$defs/classCounts"
+      },
+      "la": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Current (not deprecated) actions"
+      },
+      "tr": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Triggers"
+      },
+      "k": {
+        "type": "string",
+        "description": "Kind, empty for ordinary connectors"
+      },
+      "fs": {
+        "type": "string",
+        "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$",
+        "description": "First seen by this tool"
+      },
+      "api": {
+        "type": "string",
+        "description": "API ID used in data policies"
+      },
+      "cd": {
+        "type": "boolean",
+        "description": "A published definition was matched"
+      }
+    }
+  },
+  "$defs": {
+    "controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acp",
+        "actionControl",
+        "blockable",
+        "classifiable",
+        "dataPolicy",
+        "endpointFiltering",
+        "logicApps",
+        "nonblockable",
+        "tenantIsolation"
+      ],
+      "properties": {
+        "acp": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "not-applicable",
+            "unconfirmed"
+          ]
+        },
+        "actionControl": {
+          "type": "boolean"
+        },
+        "blockable": {
+          "type": "boolean"
+        },
+        "classifiable": {
+          "type": "boolean"
+        },
+        "dataPolicy": {
+          "type": "boolean"
+        },
+        "endpointFiltering": {
+          "type": "boolean"
+        },
+        "logicApps": {
+          "type": "boolean"
+        },
+        "nonblockable": {
+          "type": "boolean"
+        },
+        "tenantIsolation": {
+          "enum": [
+            "applies",
+            "gap",
+            "not-shown"
+          ]
+        }
+      }
+    },
+    "classCounts": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "read",
+          "write",
+          "delete",
+          "send",
+          "raw",
+          "admin",
+          "other"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "origin": {
+      "enum": [
+        "microsoft",
+        "third-party",
+        "maker-defined",
+        "unstated"
+      ]
+    },
+    "publisherType": {
+      "enum": [
+        "microsoft",
+        "independent",
+        "other"
+      ]
+    }
+  }
+}
