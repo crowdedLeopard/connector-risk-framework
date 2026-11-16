@@ -542,6 +542,12 @@ main > .table-scroll, main > div > .table-scroll, .prose + .table-scroll { borde
 .notes { list-style: none; padding: 0; margin: 0; }
 .notes li { padding: var(--s2) 0; border-top: 1px solid var(--line); }
 .notes li:first-child { border-top: 0; }
+/* A notes list framed as a card (Controls available on the connector page) reads as rows
+   of a table: the frame has no padding of its own and each row carries the same inset
+   and text size as table cells, so it lines up with the tables above it. */
+.notes.card { padding: 0; overflow: hidden; }
+.notes.card li { padding: var(--s3) var(--s4); font-size: var(--text-md); color: var(--ink-2); }
+.notes.card li strong { color: var(--ink); font-weight: 600; }
 .op-class { margin: var(--s3) 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
 .op-class summary { cursor: pointer; padding: var(--s3) var(--s4); font-weight: 500; font-size: var(--text-md); display: flex; justify-content: space-between; gap: var(--s4); align-items: center; }
 .op-class summary:hover { background: var(--surface-2); }
