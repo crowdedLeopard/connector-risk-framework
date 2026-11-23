@@ -137,3 +137,15 @@ test("no stale-data banner when the data is current", async () => {
   assert.equal(await page.locator("#stale-banner").isVisible(), false);
   await page.close();
 });
+
+test("lists framed as cards keep the same inset as table cells", async () => {
+  const { page } = await open("c/sharepointonline");
+  const inset = await page.$eval("ul.notes.card li", (li) => {
+    const text = document.createRange();
+    text.selectNodeContents(li);
+    return text.getBoundingClientRect().left - li.closest("ul").getBoundingClientRect().left;
+  });
+  const cell = await page.$eval("td", (td) => parseFloat(getComputedStyle(td).paddingLeft));
+  assert.ok(Math.abs(inset - 1 - cell) <= 1, `list text starts ${inset}px in; table cells pad ${cell}px`);
+  await page.close();
+});
